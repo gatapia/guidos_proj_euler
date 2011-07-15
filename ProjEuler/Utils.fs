@@ -1,5 +1,6 @@
 ﻿[<AutoOpen>]
 module Utils
+open System
 
 let sqr x = x * x
 
@@ -40,7 +41,7 @@ let rec getPrevPrime (from:int64) =
   match from with
   | 3L      -> 2L  
   | _ ->    
-    if from <= 2L then raise (System.Exception("Error"))
+    if from <= 2L then raise (Exception("Error"))
     let x = if from % 2L = 0L then from - 1L else from - 2L
     if isPrime x then x
     else getPrevPrime x
@@ -50,11 +51,11 @@ let getHighestPrimeFactor (num:int64) =
     if num <= 1L || num < prime then 
       prime
     else 
-      let newPrime = getNextPrime prime
-      if num % newPrime = 0L then
-        let newNum = (num / newPrime)
-        getHighestPrimeFactorAux newNum newPrime
-      else getHighestPrimeFactorAux num newPrime
+      let prime = getNextPrime prime
+      if num % prime = 0L then
+        let num = (num / prime)
+        getHighestPrimeFactorAux num prime
+      else getHighestPrimeFactorAux num prime
   getHighestPrimeFactorAux num 3L
 
 let findXthPrime x = 
@@ -74,9 +75,9 @@ let isPalindrome n =
   rev.Equals str
 
 
-let rec getFactorial num =
-  let rec getFactorialAux (acc:System.Numerics.BigInteger) num =
-    if num = 0 then acc
+let rec getFactorial num:bigint =
+  let rec getFactorialAux (acc:bigint) (num:bigint) =
+    if num = 0I then acc
     else    
-      getFactorialAux (System.Numerics.BigInteger.Multiply(acc, new System.Numerics.BigInteger(num))) (num - 1)
-  getFactorialAux (new System.Numerics.BigInteger(1)) num
+      getFactorialAux (acc * num) (num - 1I)
+  getFactorialAux 1I num

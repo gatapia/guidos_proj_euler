@@ -1,15 +1,18 @@
 ﻿module Q11_20
 
+open System
+open System.Collections.Generic
+
 // Q11: What is the sum of the digits of the number 2^1000?
 let q11 x = 
-  let num = System.Numerics.BigInteger 2
-  let bigNum = System.Numerics.BigInteger.Pow(num, 1000)
-  bigNum.ToString().ToCharArray() |> Seq.sumBy (fun c -> System.Char.GetNumericValue c)
+  let num = 2I
+  let bigNum = Numerics.BigInteger.Pow(num, 1000)
+  bigNum.ToString().ToCharArray() |> Seq.sumBy (fun c -> Char.GetNumericValue c)
 
 // Q12: Find the sum of digits in 100!
 let q12 x = 
-  let bigNum = getFactorial 100
-  bigNum.ToString().ToCharArray() |> Seq.sumBy (fun c -> System.Char.GetNumericValue c)
+  let bigNum = getFactorial 100I
+  bigNum.ToString().ToCharArray() |> Seq.sumBy (fun c -> Char.GetNumericValue c)
 
 // Q13: What is the greatest product of four adjacent numbers on the same 
 // straight line in the 20 by 20 grid?  
@@ -36,15 +39,13 @@ let q13 x =
     "20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54\n" +
     "01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48"
 
-  let grid = stringGrid.Split('\n') |> Array.map (fun line -> line.Split(' ') |> Array.map (fun str -> System.Int32.Parse str)) 
+  let grid = stringGrid.Split('\n') |> Array.map (fun line -> line.Split(' ') |> Array.map (fun str -> Int32.Parse str)) 
 
   let rec getProdOf4ConseqAux x y offset prod cnt =
     if cnt = 4 then prod
-    else    
-      match offset with
-      | (xo, yo) -> 
-        let newProd = prod * grid.[y + (yo * cnt)].[x + (xo * cnt)]
-        getProdOf4ConseqAux x y offset newProd (cnt + 1)
+    else          
+      let newProd = prod * grid.[y + (snd offset * cnt)].[x + (fst offset * cnt)]
+      getProdOf4ConseqAux x y offset newProd (cnt + 1)
      
   let getAllProds =
     let allRightProds = [0..16] |> Seq.collect(fun x -> [0..19] |> Seq.map (fun y -> getProdOf4ConseqAux x y (1, 0) 1 0))
@@ -160,7 +161,7 @@ let q14 x =
     "72107838435069186155435662884062257473692284509516"
     "20849603980134001723930671666823555245252804609722"
     "53503534226472524250874054075591789781264330331690" |]
-  let allInts = num |> Array.map (fun str -> System.Numerics.BigInteger.Parse str)
+  let allInts = num |> Array.map (fun str -> Numerics.BigInteger.Parse str)
   let sum = allInts |> Array.reduce (fun acc v -> acc + v)
   sum.ToString().Substring(0, 10)
 
@@ -168,20 +169,21 @@ let q14 x =
 let q15 x = 
   let sequence (n:int64) = if n % 2L = 0L then n / 2L else 3L * n + 1L
 
-  let rec countLinksImpl (cache:System.Collections.Generic.Dictionary<int64,int64>) n cnt = 
+  let rec countLinksImpl (cache:Dictionary<int64,int64>) n cnt = 
     if cache.ContainsKey(n) then cnt + cache.Item(n)
     else if n = 1L then cnt else countLinksImpl cache (sequence n) (cnt + 1L)
 
-  let countLinks (cache:System.Collections.Generic.Dictionary<int64,int64>) n cnt = 
+  let countLinks (cache:Dictionary<int64,int64>) n cnt = 
     if cache.ContainsKey(n) then cache.Item(n)
     else
       let cnt = countLinksImpl cache n cnt
       cache.Add(n, cnt)
       cnt
 
-  let tmp = [999999..-1..1] 
-  let cache = new System.Collections.Generic.Dictionary<int64,int64>()
-  let links = tmp |> List.map (fun n -> countLinks cache (int64 n) 0L)    
+  let tmp, cache = [999999..-1..1], new Dictionary<int64,int64>()
+  let links = [for n in 999999..-1..1 -> countLinks cache (int64 n) 0L]
   let max = links |> Seq.max    
-  let idx = (System.Array.IndexOf(links |> Seq.toArray, max))
+  let idx = (Array.IndexOf(links |> Seq.toArray, max))
   tmp.Item idx
+
+// Q16: 

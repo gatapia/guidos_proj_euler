@@ -1,11 +1,13 @@
 ﻿module Q1_10
+open System
+
 // All questions take an argument that is not being used.  This is only
 // to ensure that we do not run the function as a static property (on load)
 // but rather run it as a funciton (on demand).
 
 // Q1: Add all the natural numbers below one thousand that are multiples 
 // of 3 or 5.
-let q1 x = Seq.append [3..3..999] [5..5..999] |> Seq.distinct |> Seq.sum
+let q1 x = [3..3..999] @ [5..5..999] |> Seq.distinct |> Seq.sum
 
 // Q2: By considering the terms in the Fibonacci sequence whose values do not 
 // exceed four million, find the sum of the even-valued terms.
@@ -39,10 +41,9 @@ let q5 x = Utils.getHighestPrimeFactor 600851475143L
 // 3-digit numbers.
 
 let q6 x = 
-  let s1 = [100..999]
-  let s2 = [100..999]
+  let s1, s2 = [100..999], [100..999]
   let prods = s1 |> Seq.collect (fun (x) -> s2 |> Seq.map(fun y -> x * y))
-  let palindromes = prods |> Seq.filter Utils.isPalindrome
+  let palindromes = [for p in prods do if Utils.isPalindrome p then yield p]
   Seq.max palindromes
 
 // Q7: What is the 10001st prime number?
@@ -72,13 +73,11 @@ let thousandDigitNum =
   "71636269561882670428252483600823257530420752963450"
 
 let getProdOf5ConseqDigits idx =
-  if idx >= thousandDigitNum.Length - 5 then raise (System.Exception("Err"))
+  if idx >= thousandDigitNum.Length - 5 then raise (Exception("Err"))
   let sub = thousandDigitNum.Substring(idx, 5)
-  sub.ToCharArray() |> Seq.map (fun c -> int (System.Char.GetNumericValue(c))) |> Seq.reduce (fun acc char -> (char * acc))
+  sub.ToCharArray() |> Seq.map (fun c -> int (Char.GetNumericValue(c))) |> Seq.reduce (fun acc char -> (char * acc))
 
-let q8 x =
-  let s1 = [0..994]
-  s1 |> Seq.map (fun i -> getProdOf5ConseqDigits i) |> Seq.max
+let q8 x = [for i in 0..994 -> getProdOf5ConseqDigits i] |> Seq.max
 
 // Q9: There exists exactly one Pythagorean triplet for which a + b + c = 1000.
 // Find the product abc.
@@ -92,8 +91,8 @@ let rec find2FactorsOfX accList lastFac num =
   elif num % fac <> 0 then find2FactorsOfX accList fac num  
   else
     let other = num / fac
-    let newList = Seq.append accList [(fac, other)]    
-    find2FactorsOfX newList fac num
+    let accList = accList @ [(fac, other)]    
+    find2FactorsOfX accList fac num
 
 let find2FactorsOfSumOfX x =   
   let factors = find2FactorsOfX [] 0 (x / 2)  
@@ -111,8 +110,8 @@ let rec getPrimesBelow prime list below =
   let next = Utils.getNextPrime prime
   if next >= below then list
   else 
-    let newList = list |> Seq.append [next]
-    getPrimesBelow next newList below
+    let list = next::list
+    getPrimesBelow next list below
 
 let q10 x =
   let primes = getPrimesBelow 0L [] 2000000L
