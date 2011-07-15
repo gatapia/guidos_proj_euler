@@ -163,4 +163,25 @@ let q14 x =
   let allInts = num |> Array.map (fun str -> System.Numerics.BigInteger.Parse str)
   let sum = allInts |> Array.reduce (fun acc v -> acc + v)
   sum.ToString().Substring(0, 10)
-  
+
+// Q15: Which starting number, under one million, produces the longest chain?
+let q15 x = 
+  let sequence (n:int64) = if n % 2L = 0L then n / 2L else 3L * n + 1L
+
+  let rec countLinksImpl (cache:System.Collections.Generic.Dictionary<int64,int64>) n cnt = 
+    if cache.ContainsKey(n) then cnt + cache.Item(n)
+    else if n = 1L then cnt else countLinksImpl cache (sequence n) (cnt + 1L)
+
+  let countLinks (cache:System.Collections.Generic.Dictionary<int64,int64>) n cnt = 
+    if cache.ContainsKey(n) then cache.Item(n)
+    else
+      let cnt = countLinksImpl cache n cnt
+      cache.Add(n, cnt)
+      cnt
+
+  let tmp = [999999..-1..1] 
+  let cache = new System.Collections.Generic.Dictionary<int64,int64>()
+  let links = tmp |> List.map (fun n -> countLinks cache (int64 n) 0L)    
+  let max = links |> Seq.max    
+  let idx = (System.Array.IndexOf(links |> Seq.toArray, max))
+  tmp.Item idx
