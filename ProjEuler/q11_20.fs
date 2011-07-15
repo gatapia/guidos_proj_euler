@@ -1,6 +1,7 @@
 ﻿module Q11_20
 
 open System
+open System.Collections
 open System.Collections.Generic
 
 // Q11: What is the sum of the digits of the number 2^1000?
@@ -200,4 +201,32 @@ let q16 x =
   findFirstTriWithOverXSDivisorsAux 1 500
 
 
-//let q16 x = [1..] |> Seq.fi
+// Q17: How many routes are there through a 20 x 20 grid?
+type Q17Tree =
+    | Node of int * int * int64 * Q17Tree * Q17Tree
+    | None
+
+let q17 x =   
+  let countRoutesInNode node : int64 =
+    match node with
+    | None -> 0L
+    | Node(x, y, value, nd, nr) -> value
+
+  let getValueOfNode down right =
+    if down = None || right = None then 1L
+    else countRoutesInNode down + countRoutesInNode right
+
+  let getNodeAt (cache:IDictionary<(int * int), Q17Tree>) x y width height : Q17Tree =  
+    if x > width || y > height then None else cache.[(x, y)]
+
+  let createTree width height = 
+    let rec createNode (cache:IDictionary<(int * int), Q17Tree>) (x:int) y =   
+      let nDown, nRight = getNodeAt cache (x + 1) y width height, getNodeAt cache x (y + 1) width height
+      let n = Node(x, y, (getValueOfNode nDown nRight), nDown, nRight)
+      cache.Add((x, y), n)
+      n
+    let cache = (new Dictionary<(int * int), Q17Tree>())
+    let nodes = [for x in List.rev([0..width]) -> [for y in List.rev([0..height]) -> createNode cache x y]]
+    ((nodes |> List.rev).Head |> List.rev).Head
+
+  countRoutesInNode (createTree 20 20)
