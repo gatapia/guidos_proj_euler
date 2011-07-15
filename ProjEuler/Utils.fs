@@ -81,3 +81,18 @@ let rec getFactorial num:bigint =
     else    
       getFactorialAux (acc * num) (num - 1I)
   getFactorialAux 1I num
+
+let countTimeDivisbleBy x div =
+  let rec countTimeDivisbleByAux x div acc =
+    if x % div <> 0L then (x, acc)
+    else countTimeDivisbleByAux (x / div) div (acc + 1)
+  countTimeDivisbleByAux x div 0
+
+let countDivisors x =
+  let rec countDivisorsAux x (prime:int64) (acc:int) =
+    let numAndAcc = countTimeDivisbleBy x prime
+    if snd numAndAcc <> 0 then 
+      let acc = acc * ((snd numAndAcc) + 1)
+      countDivisorsAux (fst numAndAcc) (getNextPrime prime) acc
+    else acc
+  countDivisorsAux x 2L 1

@@ -48,9 +48,7 @@ namespace ProjEulerTests
     [Test, Sequential] public void Test_isPrime_returns_false_when_input_is_not_prime(
         [Random(2, 1000, 100)] int nonPrime, 
         [Random(2, 7, 100)] int multiplier) {      
-      int num = nonPrime * multiplier;
-      
-      Console.WriteLine("NUM: " + num + " X: " + nonPrime + " MULT: " + multiplier);
+      int num = nonPrime * multiplier;      
       Assert.IsFalse(Utils.isPrime(num));
     }
 
@@ -93,7 +91,20 @@ namespace ProjEulerTests
         [Values(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20)] int num,
         [Values(1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 2432902008176640000)] long expected
       ) {
-    Assert.AreEqual(new BigInteger(expected), Utils.getFactorial(num));
+      Assert.AreEqual(new BigInteger(expected), Utils.getFactorial(num));
+    }
+
+    [Test, Sequential] public void Test_countTimeDivisbleBy_is_correct(
+        [Values(2, 3, 1)] int exp,
+        [Values(100, 27, 7)] int x,
+        [Values(2, 3, 7)] int divisor
+      ) {
+      Assert.AreEqual(exp, Utils.countTimeDivisbleBy(x, divisor).Item2);
+    }
+
+    
+    [Test, Sequential] public void Test_countDivisors_is_correct([Values(60, 24, 126000)] long x, [Values(12, 8, 120)] int exp) {
+      Assert.AreEqual(exp, Utils.countDivisors(x));
     }
   }
 }

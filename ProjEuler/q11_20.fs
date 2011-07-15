@@ -186,4 +186,18 @@ let q15 x =
   let idx = (Array.IndexOf(links |> Seq.toArray, max))
   tmp.Item idx
 
-// Q16: 
+// Q16: What is the value of the first triangle number to have 
+// over five hundred divisors?
+let q16 x = 
+  let triNum x = [1..x] |> Seq.sum |> int64
+
+  let rec findFirstTriWithOverXSDivisorsAux triIdx expDivs =
+    let tri = triNum triIdx
+    let divs = Utils.countDivisors tri
+    if divs > expDivs then tri
+    else findFirstTriWithOverXSDivisorsAux (triIdx + 1) expDivs
+  
+  findFirstTriWithOverXSDivisorsAux 1 500
+
+
+//let q16 x = [1..] |> Seq.fi
