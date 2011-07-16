@@ -233,4 +233,9 @@ let q17 x =
 
 // Q18: What is the first term in the Fibonacci sequence to contain 1000 digits?
 let q18 x = snd (Utils.getFibSeqItemAndIndex (fun f -> f.ToString().Length = 1000) 4500)
+
+// Q19: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000
+let q19 x = 
+  let str = ([for i in 1I..1000I -> bigint.Pow(i, (int) i)] |> List.sum).ToString()
+  str.Substring(str.Length - 10)
   
