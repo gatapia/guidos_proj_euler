@@ -13,5 +13,6 @@ namespace ProjEulerTests
     [Test] public void Q15() { Assert.AreEqual(837799, Q11_20.q15(String.Empty)); }  
     [Test] public void Q16() { Assert.AreEqual(76576500, Q11_20.q16(String.Empty)); }  
     [Test] public void Q17() { Assert.AreEqual(137846528820, Q11_20.q17(String.Empty)); }  
+    [Test] public void Q18() { Assert.AreEqual(4782, Q11_20.q18(String.Empty)); }  
   }
 }

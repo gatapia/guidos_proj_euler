@@ -230,3 +230,7 @@ let q17 x =
     ((nodes |> List.rev).Head |> List.rev).Head
 
   countRoutesInNode (createTree 20 20)
+
+// Q18: What is the first term in the Fibonacci sequence to contain 1000 digits?
+let q18 x = snd (Utils.getFibSeqItemAndIndex (fun f -> f.ToString().Length = 1000) 4500)
+  

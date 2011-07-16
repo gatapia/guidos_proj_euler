@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using Microsoft.FSharp.Core;
 using NUnit.Framework;
 
 namespace ProjEulerTests
@@ -22,11 +23,21 @@ namespace ProjEulerTests
       Assert.AreEqual(900, Utils.squareOfSums(new[] {10, 10, 10}));
     }
 
+    [Test] public void Test_getFibSeq() {
+      CollectionAssert.AreEqual(new BigInteger[] {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144}, Utils.getFibSeq(12));
+    }
+
+    [Test] public void Test_getFibSeqItemAndIndex()
+    {
+      Tuple<BigInteger, int> result = Utils.getFibSeqItemAndIndex(FSharpFunc<BigInteger, bool>.FromConverter(fib => fib == 144), 10);
+      Assert.AreEqual((BigInteger) 144, result.Item1);
+      Assert.AreEqual(12, result.Item2);
+    }
+
     [Test, Sequential] public void Test_fib_sequance(
         [Values(0, 1, 2, 10, 20)] int input, 
         [Values(1, 1, 2, 89, 10946)]int expectedFib) {
       Assert.AreEqual(expectedFib, Utils.fib(input));
-        //Utils.getHighestPrimeFactor()
     }
 
     [Test, Sequential] public void Test_isFactorable_returns_true_for_numbers_that_have_factors(

@@ -10,6 +10,26 @@ let squareOfSums lst = sqr (Seq.sum lst)
 
 let rec fib n = if n < 2 then 1 else fib (n-2) + fib(n-1)
 
+let getFibSeq n =
+  let rec getFibSeqAux lst idx =
+    if idx < 2 then getFibSeqAux [0I; 1I; 1I] 3
+    elif idx > n then lst
+    else
+      let lst = lst @ [(lst.[idx - 1] + lst.[idx - 2])]
+      getFibSeqAux lst (idx + 1)
+
+  getFibSeqAux [] 0
+
+let getFibSeqItemAndIndex ifMatch startCheckingFrom =
+  let rec getFibSeqItemAndIndexAux lst idx =
+    if idx < 2 then getFibSeqItemAndIndexAux [0I; 1I; 1I] 3
+    else
+      let nth = (lst.[idx - 1] + lst.[idx - 2])
+      if idx > startCheckingFrom && ifMatch nth then (nth, idx)
+      else getFibSeqItemAndIndexAux (lst @ [nth]) (idx + 1)
+
+  getFibSeqItemAndIndexAux [] 0
+
 let isFactorable (num:int64) =
   let rec isFactorableAux (num:int64) (max:int64) (factor:int64) =
     if num <> 2L && num % 2L = 0L then true
