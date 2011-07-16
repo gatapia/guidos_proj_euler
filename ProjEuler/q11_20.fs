@@ -238,4 +238,38 @@ let q18 x = snd (Utils.getFibSeqItemAndIndex (fun f -> f.ToString().Length = 100
 let q19 x = 
   let str = ([for i in 1I..1000I -> bigint.Pow(i, (int) i)] |> List.sum).ToString()
   str.Substring(str.Length - 10)
+
+// Q20: Find the maximum total from top to bottom of the triangle below:
+let scoreTree (tree:array<array<int64>>) = 
+  [for row in 0..(tree.Length - 1) ->
+    [for col in 0..(tree.[row].Length - 1) ->
+      if row = 0 then int64 tree.[row].[col]
+      else         
+        let upl = if col = 0 then 0L else int64 tree.[row - 1].[col - 1]
+        let upr = if col = (tree.[row].Length - 1) then 0L else int64 tree.[row - 1].[col]
+        let score = int64  tree.[row].[col] + Math.Max(upl, upr)
+        tree.[row].[col] <- score
+        score
+    ]
+  ]
+
+let q20 x = 
+  let triangle = [|[|75L|];
+                   [|95L;64L|];
+                   [|17L;47L;82L|];
+                   [|18L;35L;87L;10L|];
+                   [|20L;04L;82L;47L;65L|];
+                   [|19L;01L;23L;75L;03L;34L|];
+                   [|88L;02L;77L;73L;07L;63L;67L|];
+                   [|99L;65L;04L;28L;06L;16L;70L;92L|];
+                   [|41L;41L;26L;56L;83L;40L;80L;70L;33L|];
+                   [|41L;48L;72L;33L;47L;32L;37L;16L;94L;29L|];
+                   [|53L;71L;44L;65L;25L;43L;91L;52L;97L;51L;14L|];
+                   [|70L;11L;33L;28L;77L;73L;17L;78L;39L;68L;17L;57L|];
+                   [|91L;71L;52L;38L;17L;14L;91L;43L;58L;50L;27L;29L;48L|];
+                   [|63L;66L;04L;68L;89L;53L;67L;30L;73L;16L;69L;87L;40L;31L|];
+                   [|04L;62L;98L;27L;23L;09L;70L;98L;73L;93L;38L;53L;60L;04L;23L|]; |]
+  
+  let scores = scoreTree triangle 
+  List.nth scores (scores.Length - 1) |> List.max
   
