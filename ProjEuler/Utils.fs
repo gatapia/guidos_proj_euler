@@ -2,12 +2,18 @@
 module Utils
 open System
 
+////////////////////////////////////////////////////////////////////////////////
+// MISC
+////////////////////////////////////////////////////////////////////////////////
 let sqr x = x * x
 
 let sumOfSquares lst = lst |> Seq.map sqr |> Seq.sum
 
 let squareOfSums lst = sqr (Seq.sum lst)
 
+////////////////////////////////////////////////////////////////////////////////
+// FIBONACCI
+////////////////////////////////////////////////////////////////////////////////
 let rec fib n = if n < 2 then 1 else fib (n-2) + fib(n-1)
 
 let getFibSeq n =
@@ -29,6 +35,10 @@ let getFibSeqItemAndIndex ifMatch startCheckingFrom =
       else getFibSeqItemAndIndexAux (lst @ [nth]) (idx + 1)
 
   getFibSeqItemAndIndexAux [] 0
+
+////////////////////////////////////////////////////////////////////////////////
+// PRIME
+////////////////////////////////////////////////////////////////////////////////
 
 let isFactorable (num:int64) =
   let rec isFactorableAux (num:int64) (max:int64) (factor:int64) =
@@ -94,6 +104,9 @@ let isPalindrome n =
   let rev = new string (str.ToCharArray() |> Array.rev)
   rev.Equals str
 
+////////////////////////////////////////////////////////////////////////////////
+// Division
+////////////////////////////////////////////////////////////////////////////////
 
 let rec getFactorial num:bigint =
   let rec getFactorialAux (acc:bigint) (num:bigint) =
@@ -116,3 +129,33 @@ let countDivisors x =
       countDivisorsAux (fst numAndAcc) (getNextPrime prime) acc
     else acc
   countDivisorsAux x 2L 1
+
+let getAllDivisors x =
+  let rec getAllDivisorsAux (x:int) (div:int) lst =
+    if div < 1 then lst
+    elif (x % div) = 0 then getAllDivisorsAux x (div - 1) (div :: lst)
+    else getAllDivisorsAux x (div - 1) lst
+  getAllDivisorsAux x (x - 1) []
+
+let sumDivisors x = getAllDivisors x |> List.sum
+
+let areAmicable x y = (sumDivisors x) = y && (sumDivisors y) = x
+ 
+let rec numToWord x = 
+  let w10 = ["zero";"one";"two";"three";"four";"five";"six";"seven";"eight";"nine";"ten"]
+  let wteens = ["eleven";"twelve";"thirteen";"fourteen";"fifteen";"sixteen";"seventeen";"eighteen";"nineteen"]
+  let wdecs = ["twenty";"thirty";"forty";"fifty";"sixty";"seventy";"eighty";"ninety";]
+  
+  if x = 1000 then "one thousand"
+  elif x < 11 then w10.[x]
+  elif x < 20 then wteens.[x - 11]
+  elif x < 100 then 
+    let maj = x / 10
+    let remainder = x - (maj * 10)
+    if remainder = 0 then wdecs.[maj - 2] else wdecs.[maj - 2] + " " + (numToWord remainder)
+  else    
+    let hund = x / 100
+    let remainder = x - (hund * 100)
+    let hundStr = (numToWord hund) + " " + "hundred"
+    if remainder = 0 then hundStr
+    else hundStr + " and " + (numToWord remainder)

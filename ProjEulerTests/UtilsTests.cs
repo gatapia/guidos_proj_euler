@@ -117,5 +117,69 @@ namespace ProjEulerTests
     [Test, Sequential] public void Test_countDivisors_is_correct([Values(60, 24, 126000)] long x, [Values(12, 8, 120)] int exp) {
       Assert.AreEqual(exp, Utils.countDivisors(x));
     }
+
+    [Test] public void Test_getAllDivisors()
+    {
+      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 20, 25, 50}, Utils.getAllDivisors(100));
+      Assert.AreEqual(new[] {1, 2, 11}, Utils.getAllDivisors(22));
+      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 11, 20, 22, 44, 55, 110}, Utils.getAllDivisors(220));
+      Assert.AreEqual(new[] {1, 2, 4, 71, 142}, Utils.getAllDivisors(284));
+    }
+
+    [Test] public void Test_numToWord()
+    {      
+      Assert.AreEqual("Zero".Replace("-", " ").ToLower(), Utils.numToWord(0));
+      Assert.AreEqual("One".Replace("-", " ").ToLower(), Utils.numToWord(1));
+      Assert.AreEqual("Two".Replace("-", " ").ToLower(), Utils.numToWord(2));
+      Assert.AreEqual("Three".Replace("-", " ").ToLower(), Utils.numToWord(3));
+      Assert.AreEqual("Four".Replace("-", " ").ToLower(), Utils.numToWord(4));
+      Assert.AreEqual("Five".Replace("-", " ").ToLower(), Utils.numToWord(5));
+      Assert.AreEqual("Six".Replace("-", " ").ToLower(), Utils.numToWord(6));
+      Assert.AreEqual("Seven".Replace("-", " ").ToLower(), Utils.numToWord(7));
+      Assert.AreEqual("Eight".Replace("-", " ").ToLower(), Utils.numToWord(8));
+      Assert.AreEqual("Nine".Replace("-", " ").ToLower(), Utils.numToWord(9));
+      Assert.AreEqual("Ten".Replace("-", " ").ToLower(), Utils.numToWord(10));
+      Assert.AreEqual("Eleven".Replace("-", " ").ToLower(), Utils.numToWord(11));
+      Assert.AreEqual("Twelve".Replace("-", " ").ToLower(), Utils.numToWord(12));
+      Assert.AreEqual("Thirteen".Replace("-", " ").ToLower(), Utils.numToWord(13));
+      Assert.AreEqual("Fourteen".Replace("-", " ").ToLower(), Utils.numToWord(14));
+      Assert.AreEqual("Fifteen".Replace("-", " ").ToLower(), Utils.numToWord(15));
+      Assert.AreEqual("Sixteen".Replace("-", " ").ToLower(), Utils.numToWord(16));
+      Assert.AreEqual("Seventeen".Replace("-", " ").ToLower(), Utils.numToWord(17));
+      Assert.AreEqual("Eighteen".Replace("-", " ").ToLower(), Utils.numToWord(18));
+      Assert.AreEqual("Nineteen".Replace("-", " ").ToLower(), Utils.numToWord(19));
+      Assert.AreEqual("Twenty".Replace("-", " ").ToLower(), Utils.numToWord(20));
+      Assert.AreEqual("Twenty-one".Replace("-", " ").ToLower(), Utils.numToWord(21));
+      Assert.AreEqual("Twenty-two".Replace("-", " ").ToLower(), Utils.numToWord(22));
+      Assert.AreEqual("Twenty-three".Replace("-", " ").ToLower(), Utils.numToWord(23));
+      Assert.AreEqual("Twenty-four".Replace("-", " ").ToLower(), Utils.numToWord(24));
+      Assert.AreEqual("Twenty-five".Replace("-", " ").ToLower(), Utils.numToWord(25));
+      Assert.AreEqual("Twenty-six".Replace("-", " ").ToLower(), Utils.numToWord(26));
+      Assert.AreEqual("Twenty-seven".Replace("-", " ").ToLower(), Utils.numToWord(27));
+      Assert.AreEqual("Twenty-eight".Replace("-", " ").ToLower(), Utils.numToWord(28));
+      Assert.AreEqual("Twenty-nine".Replace("-", " ").ToLower(), Utils.numToWord(29));
+      Assert.AreEqual("Thirty".Replace("-", " ").ToLower(), Utils.numToWord(30));
+      Assert.AreEqual("Thirty-one".Replace("-", " ").ToLower(), Utils.numToWord(31));
+      Assert.AreEqual("Forty".Replace("-", " ").ToLower(), Utils.numToWord(40));
+      Assert.AreEqual("Fifty".Replace("-", " ").ToLower(), Utils.numToWord(50));
+      Assert.AreEqual("Sixty".Replace("-", " ").ToLower(), Utils.numToWord(60));
+      Assert.AreEqual("Seventy".Replace("-", " ").ToLower(), Utils.numToWord(70));
+      Assert.AreEqual("Eighty".Replace("-", " ").ToLower(), Utils.numToWord(80));
+      Assert.AreEqual("Eighty-seven".Replace("-", " ").ToLower(), Utils.numToWord(87));
+      Assert.AreEqual("Ninety".Replace("-", " ").ToLower(), Utils.numToWord(90));
+      Assert.AreEqual("One hundred".Replace("-", " ").ToLower(), Utils.numToWord(100));
+      Assert.AreEqual("One hundred and one".Replace("-", " ").ToLower(), Utils.numToWord(101));
+      Assert.AreEqual("One hundred and ten".Replace("-", " ").ToLower(), Utils.numToWord(110));
+      Assert.AreEqual("One hundred and eleven".Replace("-", " ").ToLower(), Utils.numToWord(111));
+      Assert.AreEqual("One hundred and twenty".Replace("-", " ").ToLower(), Utils.numToWord(120));
+      Assert.AreEqual("One hundred and twenty-one".Replace("-", " ").ToLower(), Utils.numToWord(121));
+      Assert.AreEqual("One hundred and forty-four".Replace("-", " ").ToLower(), Utils.numToWord(144));
+      Assert.AreEqual("One hundred and sixty-nine".Replace("-", " ").ToLower(), Utils.numToWord(169));
+      Assert.AreEqual("Two hundred".Replace("-", " ").ToLower(), Utils.numToWord(200));
+      Assert.AreEqual("Three hundred".Replace("-", " ").ToLower(), Utils.numToWord(300));
+      Assert.AreEqual("Six Hundred and sixty-six".Replace("-", " ").ToLower(), Utils.numToWord(666));
+      Assert.AreEqual("One thousand".Replace("-", " ").ToLower(), Utils.numToWord(1000));
+
+    }
   }
 }
