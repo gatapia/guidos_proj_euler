@@ -159,3 +159,16 @@ let rec numToWord x =
     let hundStr = (numToWord hund) + " " + "hundred"
     if remainder = 0 then hundStr
     else hundStr + " and " + (numToWord remainder)
+
+let scoreTree (tree:array<array<int64>>) = 
+  [for row in 0..(tree.Length - 1) ->
+    [for col in 0..(tree.[row].Length - 1) ->
+      if row = 0 then int64 tree.[row].[col]
+      else         
+        let upl = if col = 0 then 0L else int64 tree.[row - 1].[col - 1]
+        let upr = if col = (tree.[row].Length - 1) then 0L else int64 tree.[row - 1].[col]
+        let score = int64  tree.[row].[col] + Math.Max(upl, upr)
+        tree.[row].[col] <- score
+        score
+    ]
+  ]

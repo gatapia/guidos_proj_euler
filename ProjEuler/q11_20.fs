@@ -240,18 +240,6 @@ let q19 x =
   str.Substring(str.Length - 10)
 
 // Q20: Find the maximum total from top to bottom of the triangle below:
-let scoreTree (tree:array<array<int64>>) = 
-  [for row in 0..(tree.Length - 1) ->
-    [for col in 0..(tree.[row].Length - 1) ->
-      if row = 0 then int64 tree.[row].[col]
-      else         
-        let upl = if col = 0 then 0L else int64 tree.[row - 1].[col - 1]
-        let upr = if col = (tree.[row].Length - 1) then 0L else int64 tree.[row - 1].[col]
-        let score = int64  tree.[row].[col] + Math.Max(upl, upr)
-        tree.[row].[col] <- score
-        score
-    ]
-  ]
 
 let q20 x = 
   let triangle = [|[|75L|];
@@ -270,6 +258,6 @@ let q20 x =
                    [|63L;66L;04L;68L;89L;53L;67L;30L;73L;16L;69L;87L;40L;31L|];
                    [|04L;62L;98L;27L;23L;09L;70L;98L;73L;93L;38L;53L;60L;04L;23L|]; |]
   
-  let scores = scoreTree triangle 
+  let scores = Utils.scoreTree triangle 
   List.nth scores (scores.Length - 1) |> List.max
   
