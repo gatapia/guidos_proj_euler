@@ -62,3 +62,14 @@ let q34 x =
     Char.GetNumericValue(sb.Chars(10000)) *
     Char.GetNumericValue(sb.Chars(100000)) *
     Char.GetNumericValue(sb.Chars(1000000))
+
+// Q35: Using words.txt (right click and 'Save Link/Target As...'), a 16K text 
+// file containing nearly two-thousand common English words, how many are triangle words?
+let q35 x =
+  let tri n = ((n + 1) * n) / 2
+  let tris = [for i in [1..1000] -> tri i]
+  let isNumTri n = tris |> List.exists (fun t -> t = n)
+  let isWordTri (w:string) =    
+    let score = w.Replace("\"", "").ToCharArray() |> Array.sumBy(fun c -> (1 + int(c) - int('A')))
+    isNumTri score
+  ((File.ReadAllText "q35_words.txt").Split(',') |> Array.filter (isWordTri)).Length

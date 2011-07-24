@@ -40,6 +40,7 @@
     <Compile Include="Utils.fs" />
     <Compile Include="q1_10.fs" />
     <Compile Include="q11_20.fs" />
+    <Compile Include="q21_30.fs" />
     <Compile Include="q31_40.fs" />
     <Content Include="q23_names.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -47,7 +48,9 @@
     <Content Include="q28_triangle.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Include="q21_30.fs" />
+    <Content Include="q35_words.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
