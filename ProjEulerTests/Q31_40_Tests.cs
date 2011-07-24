@@ -3,10 +3,10 @@ using NUnit.Framework;
 
 namespace ProjEulerTests
 {
-  public class Q31_40_Tests
+  [TestFixture, Timeout(10000)] public class Q31_40_Tests
   {
     [Test] public void Q31() { Assert.AreEqual(40730, Q31_40.q31(String.Empty)); }  
-    // [Test] public void Q32() { Assert.AreEqual(0, Q31_40.q32(String.Empty)); }  
+    [Test] public void Q32() { Assert.AreEqual(0, Q31_40.q32(String.Empty)); }  
     // [Test] public void Q33() { Assert.AreEqual(0, Q31_40.q33(String.Empty)); }  
     // [Test] public void Q34() { Assert.AreEqual(0, Q31_40.q34(String.Empty)); }  
     // [Test] public void Q35() { Assert.AreEqual(0, Q31_40.q35(String.Empty)); }  

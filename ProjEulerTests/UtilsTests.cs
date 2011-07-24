@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace ProjEulerTests
 {
-  [TestFixture] public class UtilsTests
+  [TestFixture, Timeout(10000)] public class UtilsTests
   {
      [Test, Sequential] public void Test_sqr_gives_square_of_input(
            [Values(1, 2, 10, 99)] int input, 
