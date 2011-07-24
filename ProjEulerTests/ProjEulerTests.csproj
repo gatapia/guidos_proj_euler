@@ -46,7 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Q12_30_Tests.cs" />
+    <Compile Include="Q31_40_Tests.cs" />
+    <Compile Include="Q21_30_Tests.cs" />
     <Compile Include="Q11_20_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Q1_10_Tests.cs" />

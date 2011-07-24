@@ -99,7 +99,7 @@ let findXthPrime x =
   | 2 -> 3L
   | _ -> findXthPrimeAux (x - 2) 3L
 
-let isPalindrome n = 
+let isPalindrome n =   
   let str = n.ToString()
   let rev = new string (str.ToCharArray() |> Array.rev)
   rev.Equals str
