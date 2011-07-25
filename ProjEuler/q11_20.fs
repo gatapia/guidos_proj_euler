@@ -4,18 +4,18 @@ open System
 open System.Collections
 open System.Collections.Generic
 
-// Q11: What is the sum of the digits of the number 2^1000?
+// Q16: What is the sum of the digits of the number 2^1000?
 let q11 x = 
   let num = 2I
   let bigNum = Numerics.BigInteger.Pow(num, 1000)
   bigNum.ToString().ToCharArray() |> Seq.sumBy (fun c -> Char.GetNumericValue c)
 
-// Q12: Find the sum of digits in 100!
+// Q20: Find the sum of digits in 100!
 let q12 x = 
-  let bigNum = getFactorial 100I
+  let bigNum = Utils.getFactorial 100I
   bigNum.ToString().ToCharArray() |> Seq.sumBy (fun c -> Char.GetNumericValue c)
 
-// Q13: What is the greatest product of four adjacent numbers on the same 
+// Q11: What is the greatest product of four adjacent numbers on the same 
 // straight line in the 20 by 20 grid?  
 let q13 x = 
   let stringGrid = 
@@ -58,7 +58,7 @@ let q13 x =
 
   getAllProds |> Seq.max
 
-// Q14: Work out the first ten digits of the sum of the following 
+// Q13: Work out the first ten digits of the sum of the following 
 // one-hundred 50-digit numbers.
 let q14 x = 
   let num = [|
@@ -166,7 +166,7 @@ let q14 x =
   let sum = allInts |> Array.reduce (fun acc v -> acc + v)
   sum.ToString().Substring(0, 10)
 
-// Q15: Which starting number, under one million, produces the longest chain?
+// Q14: Which starting number, under one million, produces the longest chain?
 let q15 x = 
   let sequence (n:int64) = if n % 2L = 0L then n / 2L else 3L * n + 1L
 
@@ -187,7 +187,7 @@ let q15 x =
   let idx = (Array.IndexOf(links |> Seq.toArray, max))
   tmp.Item idx
 
-// Q16: What is the value of the first triangle number to have 
+// Q12: What is the value of the first triangle number to have 
 // over five hundred divisors?
 let q16 x = 
   let triNum x = [1..x] |> Seq.sum |> int64
@@ -201,7 +201,7 @@ let q16 x =
   findFirstTriWithOverXSDivisorsAux 1 500
 
 
-// Q17: How many routes are there through a 20 x 20 grid?
+// Q15: How many routes are there through a 20 x 20 grid?
 type Q17Tree =
     | Node of int * int * int64 * Q17Tree * Q17Tree
     | None
@@ -231,15 +231,15 @@ let q17 x =
 
   countRoutesInNode (createTree 20 20)
 
-// Q18: What is the first term in the Fibonacci sequence to contain 1000 digits?
+// Q25: What is the first term in the Fibonacci sequence to contain 1000 digits?
 let q18 x = snd (Utils.getFibSeqItemAndIndex (fun f -> f.ToString().Length = 1000) 4500)
 
-// Q19: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000
+// Q48: Find the last ten digits of the series, 1^1 + 2^2 + 3^3 + ... + 1000^1000
 let q19 x = 
   let str = ([for i in 1I..1000I -> bigint.Pow(i, (int) i)] |> List.sum).ToString()
   str.Substring(str.Length - 10)
 
-// Q20: Find the maximum total from top to bottom of the triangle below:
+// Q18: Find the maximum total from top to bottom of the triangle below:
 
 let q20 x = 
   let triangle = [|[|75L|];

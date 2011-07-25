@@ -1,6 +1,12 @@
-﻿[<AutoOpen>]
-module Utils
+﻿module Utils
+
 open System
+open System.IO
+open System.Text
+open System.Text.RegularExpressions
+open System.Collections
+open System.Collections.Generic
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // MISC
@@ -55,8 +61,15 @@ let isFactorable (num:int64) =
 
 let isPrime (n:int64) = 
   if n = 2L || n = 3L then true
-  elif n < 1L || n % 2L = 0L then false
+  elif n <= 1L || n % 2L = 0L then false
   else not (isFactorable n)    
+
+let isPrimeCached (n:int64) (cache:Dictionary<int64, bool>) =
+  if cache.ContainsKey(n) then cache.[n]
+  else 
+    let is = isPrime n
+    cache.Add(n, is)
+    is
 
 let rec getNextPrime (from:int64) =  
   match from with
@@ -66,6 +79,15 @@ let rec getNextPrime (from:int64) =
     let x = if from % 2L = 0L then from + 1L else from + 2L
     if isPrime x then x
     else getNextPrime x
+
+let rec getNextPrimeCached (from:int64) (cache:Dictionary<int64, bool>) =  
+  match from with
+  | 0L | 1L -> 2L
+  | 2L      -> 3L
+  | _ ->    
+    let x = if from % 2L = 0L then from + 1L else from + 2L
+    if isPrimeCached x cache then x
+    else getNextPrimeCached x cache
 
 let rec getPrevPrime (from:int64) =  
   match from with

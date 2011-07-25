@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace ProjEulerTests
@@ -12,8 +13,8 @@ namespace ProjEulerTests
     [Test] public void Q35() { Assert.AreEqual(162, Q31_40.q35(String.Empty)); }  
     [Test] public void Q36() { Assert.AreEqual(-59231, Q31_40.q36(String.Empty)); }  
     [Test] public void Q37() { Assert.AreEqual(1533776805.0, Q31_40.q37(String.Empty)); }  
-    [Test] public void Q38() { Assert.AreEqual(-1, Q31_40.q38(String.Empty)); }  
-    // [Test] public void Q39() { Assert.AreEqual(-1, Q31_40.q39(String.Empty)); }  
-    // [Test] public void Q40() { Assert.AreEqual(-1, Q31_40.q40(String.Empty)); }  
+    [Test] public void Q38() { Assert.AreEqual(983, Q31_40.q38(String.Empty)); }  
+    [Test] public void Q39() { Assert.AreEqual(142857, Q31_40.q39(String.Empty)); }  
+    [Test] public void Q40() { Assert.AreEqual(73682, Q31_40.q40(String.Empty)); }  
   }
 }

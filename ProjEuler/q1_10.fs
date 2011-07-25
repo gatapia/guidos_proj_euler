@@ -20,11 +20,11 @@ let q2 x =
   
   q2Aux 1 0
 
-// Q3: Find the difference between the sum of the squares of the first one 
+// Q6: Find the difference between the sum of the squares of the first one 
 // hundred natural numbers and the square of the sum.
 let q3 x = Utils.squareOfSums [1..100] - Utils.sumOfSquares [1..100]
 
-// Q4 = What is the smallest positive number that is evenly divisible by all 
+// Q5 = What is the smallest positive number that is evenly divisible by all 
 // of the numbers from 1 to 20?
 let q4 x = 
   let rec findSmallestCD num test =
@@ -34,12 +34,11 @@ let q4 x =
 
   findSmallestCD 1 20
 
-// Q5 = What is the largest prime factor of the number 600851475143 ?
+// Q3 = What is the largest prime factor of the number 600851475143 ?
 let q5 x = Utils.getHighestPrimeFactor 600851475143L  
 
-// Q6: Find the largest palindrome made from the product of two 
+// Q4: Find the largest palindrome made from the product of two 
 // 3-digit numbers.
-
 let q6 x = 
   let s1, s2 = [100..999], [100..999]
   let prods = s1 |> Seq.collect (fun (x) -> s2 |> Seq.map(fun y -> x * y))

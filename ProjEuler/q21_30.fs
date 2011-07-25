@@ -13,11 +13,11 @@ let q21 x =
   printfn "%A" amicables
   amicables |> List.sumBy (fun x -> fst x)
 
-// Q22: If all the numbers from 1 to 1000 (one thousand) inclusive were 
+// Q17: If all the numbers from 1 to 1000 (one thousand) inclusive were 
 // written out in words, how many letters would be used?  
 let q22 x = [1..1000] |> List.map Utils.numToWord |> List.sumBy (fun w -> w.Replace(" ", "").Length)
 
-// Q23: What is the total of all the name scores in the file?
+// Q22: What is the total of all the name scores in the file?
 let q23 x : int64 = 
   let getAlphaScore (name:string) =
     let getCharAlphaScore (x:char) = 
@@ -31,7 +31,7 @@ let q23 x : int64 =
   // printfn "namesAndScoresSorted:%A scores: %A" namesAndScoresSorted scores  
   scores |> Array.sum
 
-// Q24:  How many Sundays fell on the first of the month during the 
+// Q19:  How many Sundays fell on the first of the month during the 
 // twentieth century (1 Jan 1901 to 31 Dec 2000)?
 let q24 x =
   let rec countSundaysAux acc (dt:DateTime) enddt =
@@ -44,7 +44,7 @@ let q24 x =
   let enddt = new DateTime(2000, 12, 31)
   countSundaysAux 0 startdt enddt
 
-// Q25: What is the sum of the numbers on the diagonals in a 1001 by 1001 spiral 
+// Q28: What is the sum of the numbers on the diagonals in a 1001 by 1001 spiral 
 // formed in the same way?
 let q25 x =
   let len = 500
@@ -64,7 +64,7 @@ let q25 x =
 
 
 
-// Q26: Find the sum of all the numbers that can be written as the sum of 
+// Q30: Find the sum of all the numbers that can be written as the sum of 
 // fifth powers of their digits.
 // TODO: This is too slow, should not be a pass!!
 let q26 x =  
@@ -83,7 +83,7 @@ let q26 x =
     
   q26Aux [2L..355000L] 0 0L
 
-// Q27: What is the millionth lexicographic permutation of the digits 
+// Q24: What is the millionth lexicographic permutation of the digits 
 // 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
 let q27 x = 
   let digits = ['0';'1';'2';'3';'4';'5';'6';'7';'8';'9']
@@ -91,7 +91,7 @@ let q27 x =
   Seq.unfold
   
   
-// Q28: Find the maximum total from top to bottom in triangle.txt 
+// Q67: Find the maximum total from top to bottom in triangle.txt 
 let q28 x = 
   let triangle = File.ReadAllText("q28_triangle.txt").Split('\n') |> 
     Array.filter (fun (str:string) -> str.Length > 0) |>
@@ -110,7 +110,7 @@ let q29 x =
   let all = Seq.distinct(all)
   Seq.toList(all).Length
 
-// Q30: Find the sum of all numbers, less than one million, which are 
+// Q36: Find the sum of all numbers, less than one million, which are 
 // palindromic in base 10 and base 2
 let q30 x =
   let lst = [1..999999] |> List.filter (fun n -> 
