@@ -55,7 +55,7 @@ let isFactorable (num:int64) =
 
 let isPrime (n:int64) = 
   if n = 2L || n = 3L then true
-  elif n % 2L = 0L then false
+  elif n < 1L || n % 2L = 0L then false
   else not (isFactorable n)    
 
 let rec getNextPrime (from:int64) =  
