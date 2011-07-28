@@ -17,6 +17,38 @@ let sumOfSquares lst = lst |> Seq.map sqr |> Seq.sum
 
 let squareOfSums lst = sqr (Seq.sum lst)
 
+let rec numToWord x = 
+  let w10 = ["zero";"one";"two";"three";"four";"five";"six";"seven";"eight";"nine";"ten"]
+  let wteens = ["eleven";"twelve";"thirteen";"fourteen";"fifteen";"sixteen";"seventeen";"eighteen";"nineteen"]
+  let wdecs = ["twenty";"thirty";"forty";"fifty";"sixty";"seventy";"eighty";"ninety";]
+  
+  if x = 1000 then "one thousand"
+  elif x < 11 then w10.[x]
+  elif x < 20 then wteens.[x - 11]
+  elif x < 100 then 
+    let maj = x / 10
+    let remainder = x - (maj * 10)
+    if remainder = 0 then wdecs.[maj - 2] else wdecs.[maj - 2] + " " + (numToWord remainder)
+  else    
+    let hund = x / 100
+    let remainder = x - (hund * 100)
+    let hundStr = (numToWord hund) + " " + "hundred"
+    if remainder = 0 then hundStr
+    else hundStr + " and " + (numToWord remainder)
+
+let scoreTree (tree:array<array<int64>>) = 
+  [for row in 0..(tree.Length - 1) ->
+    [for col in 0..(tree.[row].Length - 1) ->
+      if row = 0 then int64 tree.[row].[col]
+      else         
+        let upl = if col = 0 then 0L else int64 tree.[row - 1].[col - 1]
+        let upr = if col = (tree.[row].Length - 1) then 0L else int64 tree.[row - 1].[col]
+        let score = int64  tree.[row].[col] + Math.Max(upl, upr)
+        tree.[row].[col] <- score
+        score
+    ]
+  ]
+
 ////////////////////////////////////////////////////////////////////////////////
 // FIBONACCI
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,35 +194,3 @@ let getAllDivisors x =
 let sumDivisors x = getAllDivisors x |> List.sum
 
 let areAmicable x y = (sumDivisors x) = y && (sumDivisors y) = x
- 
-let rec numToWord x = 
-  let w10 = ["zero";"one";"two";"three";"four";"five";"six";"seven";"eight";"nine";"ten"]
-  let wteens = ["eleven";"twelve";"thirteen";"fourteen";"fifteen";"sixteen";"seventeen";"eighteen";"nineteen"]
-  let wdecs = ["twenty";"thirty";"forty";"fifty";"sixty";"seventy";"eighty";"ninety";]
-  
-  if x = 1000 then "one thousand"
-  elif x < 11 then w10.[x]
-  elif x < 20 then wteens.[x - 11]
-  elif x < 100 then 
-    let maj = x / 10
-    let remainder = x - (maj * 10)
-    if remainder = 0 then wdecs.[maj - 2] else wdecs.[maj - 2] + " " + (numToWord remainder)
-  else    
-    let hund = x / 100
-    let remainder = x - (hund * 100)
-    let hundStr = (numToWord hund) + " " + "hundred"
-    if remainder = 0 then hundStr
-    else hundStr + " and " + (numToWord remainder)
-
-let scoreTree (tree:array<array<int64>>) = 
-  [for row in 0..(tree.Length - 1) ->
-    [for col in 0..(tree.[row].Length - 1) ->
-      if row = 0 then int64 tree.[row].[col]
-      else         
-        let upl = if col = 0 then 0L else int64 tree.[row - 1].[col - 1]
-        let upr = if col = (tree.[row].Length - 1) then 0L else int64 tree.[row - 1].[col]
-        let score = int64  tree.[row].[col] + Math.Max(upl, upr)
-        tree.[row].[col] <- score
-        score
-    ]
-  ]

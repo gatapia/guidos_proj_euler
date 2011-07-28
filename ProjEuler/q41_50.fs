@@ -40,10 +40,31 @@ let q41 x =
   
   getAllLRTruncatablePrimes 11 [] 7L |> List.sum
 
-// QXX: 
-let q42 x = 10
+// Q39: For which value of p  1000, is the number of solutions maximised?
+let q42 x = 
+  let getNumberOfSolutionsForPerimeter perimeter =
+    let rec getNumberOfSolutionsForPerimeterAux acc hyp adj =
+      if hyp = perimeter - 2 then acc
+      else 
+        let opp = perimeter - (hyp + adj)
+        if (opp > adj) then getNumberOfSolutionsForPerimeterAux acc hyp (adj + 1)
+        else
+          // printfn "perimeter: %d hyp: %d adj: %d opp: %d" perimeter hyp adj opp
+          let acc = if (pown hyp 2) = (pown opp 2) + (pown adj 2) then acc + 1 else acc        
+          let finishedIter = (adj >= hyp - 1)
+          let adj = if finishedIter then 1 else adj + 1
+          let hyp = if finishedIter then hyp + 1 else hyp
+          getNumberOfSolutionsForPerimeterAux acc hyp adj
+        
+    getNumberOfSolutionsForPerimeterAux 0 2 1
+    
+  let perimeters = [4..1000]
+  let pss = perimeters |> List.map(fun p -> p, getNumberOfSolutionsForPerimeter p)
+  let max = pss |> List.maxBy(fun ps -> snd ps)
+  fst max
 
-// QXX: 
+// Q33: If the product of these four fractions is given in its lowest common 
+// terms, find the value of the denominator
 let q43 x = 10
 
 // QXX: 
