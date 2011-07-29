@@ -2,6 +2,7 @@
 using System.Numerics;
 using Microsoft.FSharp.Core;
 using NUnit.Framework;
+using System.Linq;
 
 namespace ProjEulerTests
 {
@@ -187,7 +188,37 @@ namespace ProjEulerTests
       Assert.AreEqual("Three hundred".Replace("-", " ").ToLower(), Utils.numToWord(300));
       Assert.AreEqual("Six Hundred and sixty-six".Replace("-", " ").ToLower(), Utils.numToWord(666));
       Assert.AreEqual("One thousand".Replace("-", " ").ToLower(), Utils.numToWord(1000));
+    }
 
+    [Test] public void Test_isPandigital_starting_at_0([Values(1023456, 76543210)] int n)
+    {
+      Assert.IsTrue(Utils.isPandigital(n));
+    }
+
+    [Test] public void Test_isPandigital_starting_at_1([Values(654123, 654321)] int n)
+    {
+      Assert.IsTrue(Utils.isPandigital(n));
+    }
+
+    [Test] public void Test_isPandigital_false_when_starting_at_any_other([Values(5432, 76354)] int n)
+    {
+      Assert.IsFalse(Utils.isPandigital(n));
+    }
+
+    [Test] public void Test_isPandigital_false_when_numbers_skip([Values(102456, 7654210)] int n)
+    {
+      Assert.IsFalse(Utils.isPandigital(n));
+    }
+
+    [Test] public void Test_isPandigital_false_when_numbers_repeat([Values(10323456, 765430210)] int n)
+    {
+      Assert.IsFalse(Utils.isPandigital(n));
+    }    
+
+    [Test] public void Test_getAllCombinations()
+    {
+      CollectionAssert.AreEquivalent(new [] {"123", "132", "213", "231", "312", "321"}, Utils.getAllCombinations("123"));      
+      CollectionAssert.AreEquivalent(new [] {"1234", "1243", "1324", "1342", "1423", "1432", "2134", "2143", "2314", "2341", "2413", "2431", "3124", "3142", "3214", "3241", "3412", "3421", "4123", "4132", "4213", "4231", "4312", "4321"}, Utils.getAllCombinations("1234"));
     }
   }
 }

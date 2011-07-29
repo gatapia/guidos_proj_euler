@@ -49,6 +49,33 @@ let scoreTree (tree:array<array<int64>>) =
     ]
   ]
 
+let swapArrayItems (arr:array<'a>) idx1 idx2 =
+  let tmp = arr.[idx1]
+  arr.[idx1] <- arr.[idx2]
+  arr.[idx2] <- tmp
+
+let rec heapPermute n (lst:List<string>) (arr:array<char>) = 
+  if n = 1 then lst.Add(new String(arr));
+  else 
+    for i in 0..(n - 1) do
+      heapPermute (n-1) lst arr
+      if n % 2 = 1 then swapArrayItems arr 0 (n-1)
+      else swapArrayItems arr i (n-1)
+
+let getAllCombinations (str:string) =
+  let lst = new List<string>()
+  let strc = str.ToCharArray()
+  heapPermute strc.Length lst strc
+  lst
+
+let isPandigital n =
+  let str = n.ToString()
+  let chars = str.ToCharArray() |> Seq.distinct |> Seq.sort |> Seq.toArray
+  if chars.Length <> str.Length || (chars.[0] <> '0' && chars.[0] <> '1') then false
+  else 
+    let max = if chars.[0] = '0' then str.Length - 1 else str.Length
+    chars.[chars.Length - 1] = max.ToString().Chars(0)
+
 ////////////////////////////////////////////////////////////////////////////////
 // FIBONACCI
 ////////////////////////////////////////////////////////////////////////////////
