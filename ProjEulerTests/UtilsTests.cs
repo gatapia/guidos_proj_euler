@@ -60,7 +60,7 @@ namespace ProjEulerTests
         [Random(2, 1000, 100)] int nonPrime, 
         [Random(2, 7, 100)] int multiplier) {      
       int num = nonPrime * multiplier;      
-      Assert.IsFalse(Utils.isPrime(num));
+      Assert.IsFalse(Utils.isPrime(num));      
     }
 
     [Test, Sequential] public void Test_isPaliondrome_returns_true_when_number_is_same_in_both_ways(
@@ -118,12 +118,20 @@ namespace ProjEulerTests
       Assert.AreEqual(exp, Utils.countDivisors(x));
     }
 
-    [Test] public void Test_getAllDivisors()
+    [Test] public void Test_getAllDivisors_not_inclusive()
     {
-      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 20, 25, 50}, Utils.getAllDivisors(100));
-      Assert.AreEqual(new[] {1, 2, 11}, Utils.getAllDivisors(22));
-      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 11, 20, 22, 44, 55, 110}, Utils.getAllDivisors(220));
-      Assert.AreEqual(new[] {1, 2, 4, 71, 142}, Utils.getAllDivisors(284));
+      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 20, 25, 50}, Utils.getAllDivisors(100, false));
+      Assert.AreEqual(new[] {1, 2, 11}, Utils.getAllDivisors(22, false));
+      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 11, 20, 22, 44, 55, 110}, Utils.getAllDivisors(220, false));
+      Assert.AreEqual(new[] {1, 2, 4, 71, 142}, Utils.getAllDivisors(284, false));
+    }
+
+    [Test] public void Test_getAllDivisors_inclusive()
+    {
+      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 20, 25, 50, 100}, Utils.getAllDivisors(100, true));
+      Assert.AreEqual(new[] {1, 2, 11, 22}, Utils.getAllDivisors(22, true));
+      Assert.AreEqual(new[] {1, 2, 4, 5, 10, 11, 20, 22, 44, 55, 110, 220}, Utils.getAllDivisors(220, true));
+      Assert.AreEqual(new[] {1, 2, 4, 71, 142, 284}, Utils.getAllDivisors(284, true));
     }
 
     [Test] public void Test_numToWord()

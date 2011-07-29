@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace ProjEulerTests
 {
-  [TestFixture] public class Q31_40_Tests
+  [TestFixture, Timeout(10000)] public class Q31_40_Tests
   {
     [Test] public void Q31() { Assert.AreEqual(40730, Q31_40.q31(String.Empty)); }  
     [Test] public void Q32() { Assert.AreEqual(4179871, Q31_40.q32(String.Empty)); }  

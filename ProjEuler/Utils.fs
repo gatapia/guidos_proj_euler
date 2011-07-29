@@ -130,6 +130,15 @@ let rec getPrevPrime (from:int64) =
     if isPrime x then x
     else getPrevPrime x
 
+let rec getPrevPrimeCached (from:int64) (cache:Dictionary<int64, bool>) =  
+  match from with
+  | 3L      -> 2L  
+  | _ ->    
+    if from <= 2L then raise (Exception("Error"))
+    let x = if from % 2L = 0L then from - 1L else from - 2L
+    if isPrimeCached x cache then x
+    else getPrevPrimeCached x cache
+
 let getHighestPrimeFactor (num:int64) =
   let rec getHighestPrimeFactorAux (num:int64) (prime:int64) =
     if num <= 1L || num < prime then 
@@ -184,13 +193,15 @@ let countDivisors x =
     else acc
   countDivisorsAux x 2L 1
 
-let getAllDivisors x =
-  let rec getAllDivisorsAux (x:int) (div:int) lst =
+let getAllDivisors x inclusive =
+  let rec getAllDivisorsAux x div lst =
     if div < 1 then lst
     elif (x % div) = 0 then getAllDivisorsAux x (div - 1) (div :: lst)
     else getAllDivisorsAux x (div - 1) lst
-  getAllDivisorsAux x (x - 1) []
+   
+  let initialDiv = if inclusive then x else (x - 1)
+  getAllDivisorsAux x initialDiv []
 
-let sumDivisors x = getAllDivisors x |> List.sum
+let sumDivisors x = getAllDivisors x false |> List.sum
 
 let areAmicable x y = (sumDivisors x) = y && (sumDivisors y) = x

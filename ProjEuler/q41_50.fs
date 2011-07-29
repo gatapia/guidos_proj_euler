@@ -65,25 +65,156 @@ let q42 x =
 
 // Q33: If the product of these four fractions is given in its lowest common 
 // terms, find the value of the denominator
-let q43 x = 10
+let q43 x = 
+  let min = 10
+  let max = 99
 
-// QXX: 
-let q44 x = 10
+  let isCurious numerator denominator =    
+    let numstr = numerator.ToString();
+    let denstr = denominator.ToString();
+    if denstr.Chars(1) = '0' then false
+    elif (numstr.Chars(0) = denstr.Chars(1)) then
+      // printfn "numstr: %s denstr: %s" numstr denstr
+      let exp = decimal(Char.GetNumericValue (numstr.Chars(1))) / decimal(Char.GetNumericValue (denstr.Chars(0)))
+      exp = (decimal(numerator) / decimal(denominator))
+    else if (numstr.Chars(1) = denstr.Chars(0)) then
+      let exp = decimal(Char.GetNumericValue (numstr.Chars(0))) / decimal(Char.GetNumericValue (denstr.Chars(1)))
+      exp = (decimal(numerator) / decimal(denominator))
+    else false
+  
+  let rec findCuriosNums lst num den =
+    let lst = if isCurious num den then (num,den) :: lst else lst
 
-// QXX: 
-let q45 x = 10
+    if num = max - 1 && den = max then lst
+    else          
+      if den = max then findCuriosNums lst (num + 1) (num + 2)
+      else findCuriosNums lst num (den + 1)
+  
+  let curouss = findCuriosNums [] min (min + 1)
+  
+  let numerator = curouss |> List.fold(fun acc tup -> acc * fst tup) 1
+  let denominator = curouss |> List.fold(fun acc tup -> acc * snd tup) 1
+  let numDivisors = Utils.getAllDivisors numerator true
+  let denDivisors = Utils.getAllDivisors denominator true
+  let commons = (Set.ofList numDivisors) |> Set.intersect (Set.ofList denDivisors)
+  // printfn "commons: %A" (Set.toArray commons)
+  // printfn "original %d / %d" numerator denominator
+  // printfn "reduced %d / %d" (numerator / commons.MaximumElement) (denominator / commons.MaximumElement)
+  denominator / commons.MaximumElement
 
-// QXX: 
+// Q53: How many, not necessarily distinct, values of  nCr, for 1  n  100, 
+// are greater than one-million?
+let q44 x = 
+  let ns = [23I..100I]  
+  let nCr n r = Utils.getFactorial n / (Utils.getFactorial r * (Utils.getFactorial (n - r)))
+  
+  let howManyGreaterThan1M n =
+    let rs = [2I..(n-1I)]
+    let scoresGT1M = rs |> List.map (fun r -> nCr n r) |> List.filter (fun s -> s > 1000000I)
+    scoresGT1M.Length
+
+  let scoresGT1MForAllNs = ns |> List.map(fun n -> howManyGreaterThan1M n)
+  scoresGT1MForAllNs |> List.sum
+
+// Q41: What is the largest n-digit pandigital prime that exists?
+let q45 x = 
+  
+  // n = 7 as sum of digist of 8 and 9 dig pandigital is divisible by nine  
+  let max = 7654321L
+  let allDigits = [1..7] |> List.map(fun i -> i.ToString())
+  let cachedForLengths = [1..7] |> List.map (fun len -> allDigits |> Seq.take (len) |> Seq.toArray)
+
+  let isPandigital n =
+    let str = n.ToString()
+    if (str.IndexOf('0') >= 0) then false
+    else           
+      let exp = cachedForLengths.[str.Length - 1]         
+      exp |> Array.forall (fun d -> str.IndexOf(d) >= 0)
+  
+  let rec getPrevPandigital (n:int64) = 
+    let n = n - 2L // Only odds
+    if isPandigital n then n else getPrevPandigital n
+  
+  let rec getHighestPandigitalPrime (n:int64) count =    
+    if count % 1000 = 0 then printfn "n: %d" n
+
+    if Utils.isPrime n then n
+    else getHighestPandigitalPrime (getPrevPandigital n) (count + 1)
+
+  getHighestPandigitalPrime (getPrevPandigital max) 1  
+
+// Q:32 Find the sum of all products whose multiplicand/multiplier/product 
+// identity can be written as a 1 through 9 pandigital.
 let q46 x = 10
 
-// QXX: 
-let q47 x = 10
+// Q56: Considering natural numbers of the form, a^b, where a, b < 100, 
+// what is the maximum digital sum?
+let q47 x = 
+  let limit = 99
+  
+  let sumDigits n = 
+    n.ToString().ToCharArray() |> Array.sumBy(fun c -> int (c) - int ('0'))
 
-// Q41: 
-let q48 x = 10
+  let rec getMaxSum max (a:int) b =
+    let pwned = pown (bigint (a)) b
+    let sum = sumDigits pwned    
 
-// QXX: 
-let q49 x = 10
+    let max = if sum > max then sum else max
+    
+    if a = limit && b = limit then max
+    else
+      let a = if b = limit then (a + 1) else a
+      let b = if b = limit then 1 else (b + 1)
+      getMaxSum max a b
 
-// QXX: 
-let q59 x = 10
+  getMaxSum 0 1 1
+
+// Q97: Find the last ten digits of the non-Mersenne prime: 28433 × (2^7830457) + 1.: 
+let q48 x =   
+  let pow = bigint.Pow(2I,7830457)
+  let num = (28433I * pow) + 1I  
+  num % 10000000000I
+
+// Q55: How many Lychrel numbers are there below ten-thousand?
+let q49 x = 
+  let rec isLychrel n attempts =
+    if attempts = 50 then true
+    else
+      let rev = n.ToString().ToCharArray() |> Array.rev 
+      let sum = n + bigint.Parse(new String(rev))
+      if Utils.isPalindrome sum then false
+      else isLychrel sum (attempts + 1)
+  
+  let rec countLychrelsBelow acc n =
+    if n = 0I then acc
+    else
+      let acc = if isLychrel n 1 then (acc + 1) else acc
+      countLychrelsBelow acc (n - 1I)
+  
+  countLychrelsBelow 0 9999I
+
+// Q38: What is the largest 1 to 9 pandigital 9-digit number that can be 
+// formed as the concatenated product of an integer with (1,2, ... , n) where n  1?
+let q50 x = 
+  let allDigits = [1..9] |> List.map(fun i -> i.ToString())
+  let cachedForLengths = [1..9] |> List.map (fun len -> allDigits |> Seq.take (len) |> Seq.toArray)
+
+  let is9DigitPandigital (str:string) =
+    if (str.Length <> 9 || str.IndexOf('0') >= 0) then false
+    else           
+      let exp = cachedForLengths.[str.Length - 1]         
+      exp |> Array.forall (fun d -> str.IndexOf(d) >= 0)
+
+  let getConcatenated i n =
+    let mults = [1..n] |> List.map(fun m -> i * m)
+    let sb = new StringBuilder()
+    mults |> List.iter (fun m -> (ignore(sb.Append(m))))
+    sb.ToString()
+
+  // Assume has to start with 9
+  let ints = List.concat [[9] ; [99..-1..90] ; [999..-1..900] ; [9999..-1..9000]]
+  let concats = ints |> List.collect(fun i -> [2..11] |> List.map (fun n -> getConcatenated i n))
+  let pandigts = concats |> List.filter (fun str -> is9DigitPandigital str)
+  let nums = pandigts |> List.map(fun str -> Int64.Parse (str))
+  nums |> List.max
+
