@@ -70,15 +70,49 @@ let q52 x =
   ignore ([for i in [1..10] -> sumNextIsPrime 0L i])   
   fst (primesAndTerms |> Seq.maxBy(fun pt -> snd pt))
 
-// QX: xxx
+// Q47: Find the first four consecutive integers to have four distinct 
+// primes factors. What is the first of these numbers?
 let q53 x = 
-  10
+  let cache = new Dictionary<int64, bool>()  
+  let has4distinctPrimes n = 
+    let factors = Utils.getAllDivisors n false |> List.filter (fun f -> Utils.isPrimeCached (int64 f) cache)
+    factors.Length = 4
+  
+  let rec q53Aux nxt (lst:list<int>) =        
+    if has4distinctPrimes nxt then
+     if lst.Length > 2 then printfn "has4distinctPrimes nxt: %d list: %d" nxt lst.Length
+     let lst = nxt :: lst
+     if lst.Length = 4 then lst
+     else q53Aux (nxt + 1) lst
+    else q53Aux (nxt + 1) []
 
-// QX: xxx
+  let lst = q53Aux 134000 []  
+  lst.Item(lst.Length - 1)
+
+// Q46: What is the smallest odd composite that cannot be written as the 
+// sum of a prime and twice a square?
 let q54 x = 
-  10
+  let cache = new Dictionary<int64, bool>()  
+  let isGoldbach x =
+    let rec isGoldbachAux prime =
+      let rem = (x - prime) / 2L      
+            
+      let sq = sqrt(float(rem)) 
+      if sq = float(int(sq)) then true
+      else 
+        if prime = 2L then false
+        else isGoldbachAux (Utils.getPrevPrimeCached prime cache)
+    
+    Utils.isPrimeCached x cache || isGoldbachAux (Utils.getPrevPrimeCached x cache)
+  
+  let rec findFirstOddNotGoldbach odd =
+    if isGoldbach odd then findFirstOddNotGoldbach (odd + 2L)
+    else odd
+  
+  findFirstOddNotGoldbach 33L
 
-// QX: xxx
+// Q43: Find the sum of all pandigital numbers with an unusual sub-string 
+// divisibility property.
 let q55 x = 
   10
 
