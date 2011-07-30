@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace ProjEulerTests
 {
-  [TestFixture, Timeout(1000000)] public class Q51_60_Tests
+  [TestFixture, Timeout(10000)] public class Q51_60_Tests
   {
     [Test] public void Q51() { Assert.AreEqual(73162890, Q51_60.q51(String.Empty)); }  
     [Test] public void Q52() { Assert.AreEqual(997651, Q51_60.q52(String.Empty)); }  
