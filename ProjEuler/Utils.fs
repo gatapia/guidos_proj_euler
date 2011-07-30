@@ -54,6 +54,12 @@ let swapArrayItems (arr:array<'a>) idx1 idx2 =
   arr.[idx1] <- arr.[idx2]
   arr.[idx2] <- tmp
 
+let areNumbersPermutations num1 num2 =
+  let num1arr = num1.ToString().ToCharArray()
+  let num2arr = num2.ToString().ToCharArray()
+  if num1arr.Length <> num2arr.Length then false
+  else Array.forall2 (fun a b -> a = b) (Array.sort(num1arr)) (Array.sort(num2arr))
+
 let rec heapPermute n (lst:List<string>) (arr:array<char>) = 
   if n = 1 then lst.Add(new String(arr));
   else 
@@ -75,6 +81,18 @@ let isPandigital n =
   else 
     let max = if chars.[0] = '0' then str.Length - 1 else str.Length
     chars.[chars.Length - 1] = max.ToString().Chars(0)
+
+let isNatural n = n - float(int(n)) = 0.0
+
+let getTriangluarN x = ((sqrt((8.0 * x) + 1.0) - 1.0) / 2.0)
+
+let getTriangle n = ((n + 1.0) * n) / 2.0  
+
+let isPentagonal n = isNatural ((sqrt((24.0 * n) + 1.0) + 1.0) / 6.0)
+
+let getPentagonal n = (n * ((3 * n) - 1)) / 2
+
+let isHexagonal n = isNatural ((sqrt((8.0 * n) + 1.0) + 1.0) / 4.0)
 
 ////////////////////////////////////////////////////////////////////////////////
 // FIBONACCI

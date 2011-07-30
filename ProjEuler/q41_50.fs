@@ -121,27 +121,16 @@ let q45 x =
   
   // n = 7 as sum of digist of 8 and 9 dig pandigital is divisible by nine  
   let max = 7654321L
-  let allDigits = [1..7] |> List.map(fun i -> i.ToString())
-  let cachedForLengths = [1..7] |> List.map (fun len -> allDigits |> Seq.take (len) |> Seq.toArray)
-
-  let isPandigital n =
-    let str = n.ToString()
-    if (str.IndexOf('0') >= 0) then false
-    else           
-      let exp = cachedForLengths.[str.Length - 1]         
-      exp |> Array.forall (fun d -> str.IndexOf(d) >= 0)
-  
-  let rec getPrevPandigital (n:int64) = 
-    let n = n - 2L // Only odds
-    if isPandigital n then n else getPrevPandigital n
-  
-  let rec getHighestPandigitalPrime (n:int64) count =    
-    if count % 1000 = 0 then printfn "n: %d" n
-
+  let all = Utils.getAllCombinations("1234567")
+  all.Sort()
+  all.Reverse()  
+   
+  let rec getHighestPrime idx =    
+    let n = Int64.Parse(all.Item(idx))
     if Utils.isPrime n then n
-    else getHighestPandigitalPrime (getPrevPandigital n) (count + 1)
+    else getHighestPrime(idx + 1)
 
-  getHighestPandigitalPrime (getPrevPandigital max) 1  
+  getHighestPrime 0   
 
 // Q:32 Find the sum of all products whose multiplicand/multiplier/product 
 // identity can be written as a 1 through 9 pandigital.
@@ -196,14 +185,8 @@ let q49 x =
 // Q38: What is the largest 1 to 9 pandigital 9-digit number that can be 
 // formed as the concatenated product of an integer with (1,2, ... , n) where n  1?
 let q50 x = 
-  let allDigits = [1..9] |> List.map(fun i -> i.ToString())
-  let cachedForLengths = [1..9] |> List.map (fun len -> allDigits |> Seq.take (len) |> Seq.toArray)
-
   let is9DigitPandigital (str:string) =
-    if (str.Length <> 9 || str.IndexOf('0') >= 0) then false
-    else           
-      let exp = cachedForLengths.[str.Length - 1]         
-      exp |> Array.forall (fun d -> str.IndexOf(d) >= 0)
+    str.IndexOf('0') < 0 && Utils.isPandigital str
 
   let getConcatenated i n =
     let mults = [1..n] |> List.map(fun m -> i * m)

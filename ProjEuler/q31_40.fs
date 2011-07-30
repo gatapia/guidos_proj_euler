@@ -105,22 +105,15 @@ let q36 x =
 
 // Q45: Find the next triangle number that is also pentagonal and hexagonal
 let q37 x2 =
-  let start = 40755.0
-  let isNatural n = n - float(int(n)) = 0.0
-  let getTriangluarN x = ((sqrt((8.0 * x) + 1.0) - 1.0) / 2.0)
-  let getTriangle n = ((n + 1.0) * n) / 2.0  
-  let isPentagonal n = isNatural ((sqrt((24.0 * n) + 1.0) + 1.0) / 6.0)
-  let isHexagonal n = isNatural ((sqrt((8.0 * n) + 1.0) + 1.0) / 4.0)
+  let start = 40755.0  
   
-  let startn = getTriangluarN start
+  let startn = Utils.getTriangluarN start
   let rec testNext nextn =
-    let tri = getTriangle nextn
-    if isPentagonal (tri) && isHexagonal (tri) then tri
+    let tri = Utils.getTriangle nextn
+    if Utils.isPentagonal (tri) && Utils.isHexagonal (tri) then tri
     else testNext (nextn + 1.0)
 
   testNext (startn + 1.0)
-
-
 
 // Q26: Find the value of d  1000 for which 1/d contains the longest recurring 
 // cycle in its decimal fraction part

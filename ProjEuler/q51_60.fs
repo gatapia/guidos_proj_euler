@@ -6,6 +6,7 @@ open System.Text
 open System.Text.RegularExpressions
 open System.Collections
 open System.Collections.Generic
+open System.Linq
 
 // Q79: By analysing a user's login attempts, can you determine the secret 
 // numeric passcode?
@@ -114,24 +115,126 @@ let q54 x =
 // Q43: Find the sum of all pandigital numbers with an unusual sub-string 
 // divisibility property.
 let q55 x = 
-  10
+  let all = Utils.getAllCombinations("0123456789")
 
-// QX: xxx
+  let isSubStringDivisble str =    
+    let primes = [|2;3;5;7;11;13;17|]
+
+    let rec isSubStringDivisbleAux (str:string) idx =      
+      if idx = 8 then true
+      else
+        let n = Int32.Parse(str.Substring(idx, 3))
+        if n % primes.[idx - 1] = 0 then isSubStringDivisbleAux str (idx + 1)
+        else false
+    isSubStringDivisbleAux str 1   
+
+  all.ToArray() |> Array.filter (fun str -> isSubStringDivisble str) |> Array.sumBy(fun str -> Int64.Parse (str))
+
+// Q49: What 12-digit number do you form by concatenating the three 
+// terms in this sequence?
 let q56 x = 
-  10
+  let cache = new Dictionary<int64, bool>()  
+  let rec fillCache n =
+    let prime = Utils.getNextPrimeCached n cache
+    if prime >= 9999L then ()
+    else fillCache prime
+  fillCache 999L
+  let allprimes = cache |> Seq.filter(fun kvp -> kvp.Value && kvp.Key > 999L && kvp.Key <= 9999L) |> Seq.map(fun kvp -> kvp.Key) |> Seq.sort |> Seq.toArray
 
-// QX: xxx
+  let rec get3PermutationTerms num idx =        
+    if idx = allprimes.Length then []
+    else
+      let num2 = allprimes.[idx]                  
+      if (num <> num2 && Utils.areNumbersPermutations num num2) then 
+        let diff = num2 - num
+        let num3 = num2 + diff
+        if (Utils.areNumbersPermutations num num3) && (Utils.isPrimeCached num3 cache) then [num;num2;num3]
+        else get3PermutationTerms num (idx + 1)
+      else
+        get3PermutationTerms num (idx + 1)
+  
+  let rec findFirstSetOfPerms i =
+    if i >= allprimes.Length - 4 then raise (Exception("Err"))
+    let prime = allprimes.[i]
+    // Ignore primes with repeats digits
+    if prime = 1487L then findFirstSetOfPerms (i + 1)
+    else
+      let perms = get3PermutationTerms prime i
+      if perms.Length = 3 && perms.[0] - perms.[1] = perms.[1] - perms.[2] then perms 
+      else findFirstSetOfPerms (i + 1)
+  
+  let perm = findFirstSetOfPerms 0 
+  perm.[0].ToString() + perm.[1].ToString() + perm.[2].ToString()
+  
+
+// Q44: Find the pair of pentagonal numbers, Pj and Pk, for which their sum 
+// and difference is pentagonal and D = |Pk - Pj| is minimised; 
+// what is the value of D?
 let q57 x = 
-  10
+  let pents = [for n in 1..10000 -> Utils.getPentagonal n]
+  let combinations = seq {
+    for p1 in pents do
+      for p2 in pents do        
+        if p1 < p2 && Utils.isPentagonal (float(p1 + p2)) && Utils.isPentagonal (float(Math.Abs(p2 - p1))) then 
+          yield (p1, p2)
+  }
+  let Ds = combinations |> Seq.map(fun p1p2 -> Math.Abs(snd p1p2 - fst p1p2))
+  Ds |> Seq.min
 
-// QX: xxx
+// Q63: How many n-digit positive integers exist which are also an nth power?
 let q58 x = 
-  10
+  let findNDigitNumsThatArePowerOfN n acc =
+    let rec findNDigitNumsThatArePowerOfNAux (i:bigint) acc =
+      let str = (pown i n).ToString()
+      if str.Length > n then acc
+      elif str.Length = n then
+        findNDigitNumsThatArePowerOfNAux (i + 1I) (acc + 1)
+      else findNDigitNumsThatArePowerOfNAux (i + 1I) acc
+    findNDigitNumsThatArePowerOfNAux 1I acc
+  
 
-// QX: xxx
-let q59 x = 
-  10
+  [1..100] |> Seq.map(fun n -> findNDigitNumsThatArePowerOfN n 0) |> Seq.sum
 
-// QX: xxx
+// Q59: Using a brute force attack, can you decrypt the cipher 
+// using XOR encryption?
+let q59 x : int = 
+  let bytes = File.ReadAllText("q59_cipher.txt").Split(',') |> Array.map (fun s -> Int32.Parse(s))
+  let decrypt (key:array<int>) = bytes |> Array.mapi(fun i x -> x ^^^ key.[i % key.Length])
+  let getEnglishyScore(decrypted:array<int>) = (decrypted |> Array.filter(fun b -> b = 32 || (b >= 65 && b <= 122) || (b >= 48 && b <= 57))).Length
+  
+  let possibleKeys = new List<array<int>>()
+  for c1 in 'a'..'z' do
+    for c2 in 'a'..'z' do
+      for c3 in 'a'..'z' do
+        if c1 <> c2 && c2 <> c3 && c1 <> c3 then          
+          possibleKeys.Add([|int(c1);int(c2);int(c3)|])
+  
+  let englishy = possibleKeys.ToArray() |> Array.map(fun k -> (k, getEnglishyScore (decrypt k))) |> Array.sortBy(fun ks -> 0 - (snd ks))  
+  let unencrypted = decrypt (fst englishy.[0])
+  // printfn "unencrypted1: %s" (new String((decrypt (fst englishy.[0])) |> Array.map(fun i -> char(if i = 0 then 32 else i))))
+  Array.sum unencrypted
+
+// Q92: Investigating a square digits number chain with a surprising property.
+// TOO SLOW
 let q60 x = 
-  10
+  let cache = new Dictionary<int, bool>()
+  let charCache = new Dictionary<char, int>()
+  ['0'..'9'] |> List.iter(fun c -> charCache.Add(c, pown (int(c) - int('0')) 2))
+  let nextTerm x = x.ToString().ToCharArray() |> Array.map(fun c -> charCache.[c]) |> Array.sum  
+  
+  let rec endsIn89 n lst =
+    if cache.ContainsKey(n) then 
+      lst |> List.iter(fun i -> cache.Add(i, cache.[n]))
+      cache.[n]
+    else
+      let lst = n::lst    
+      if n = 89 then 
+        lst |> List.iter(fun i -> cache.Add(i, true))
+        true
+      elif n = 1 then 
+        lst |> List.iter(fun i -> cache.Add(i, false))
+        false
+      else endsIn89 (int32(nextTerm n)) lst  
+  
+  let cnt = ([2..9999999] |> List.filter(fun n -> endsIn89 n [])).Length
+  cnt
