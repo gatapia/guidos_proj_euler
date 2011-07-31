@@ -5,7 +5,6 @@ open System.IO
 open System.Text
 open System.Text.RegularExpressions
 open System.Collections
-open System.Collections.Generic
 open System.Linq
 
 // Q57: In the first one-thousand expansions, how many fractions 
@@ -51,30 +50,132 @@ let q62 x =
   q62Aux 3 0.0 0.0 1 6 0 0
 
 // Q69: Find the value of n ≤ 1,000,000 for which n/φ(n) is a maximum.
-let q63 x = 
-  let lst = [|1.0..1000000.0|]
-  let primes = [1..10] |> List.map(fun i -> float(Utils.findXthPrime(i)))
-  let getPrimeDivisors x = primes |> List.filter(fun p -> x % p = 0.0)
-  let divs = lst |> Array.map(fun i -> getPrimeDivisors i)  
-  let doTermsShareDivisor a b =    
-    let aDivs = divs.[Array.IndexOf(lst, a)]
-    let bDivs = divs.[Array.IndexOf(lst, b)]        
-    aDivs |> List.exists(fun a -> bDivs |> List.exists(fun b -> b = a))
+// TOO SLOW!!!!!!!!!!!
+let q63 x =   
+  let phi x2 =
+    // This algorithm copied from http://www.velocityreviews.com/
+    // forums/t459467-computing-eulers-totient-function.html
+    // Boooooooooooooo
+    let mutable x = x2
+    let mutable ret = 1
+    let mutable i = 2
+    let mutable pow = 0
+
+    while x <> 1 do  
+      pow <- 1
+      while (x % i = 0) do
+        x <- x / i
+        pow <- pow * i    
+      ret <- ret * (pow - (pow/i))    
+      i <- i + 1
+    ret  
   
-  let phi (x:float) = 1.0 + float(([2.0..(x - 1.0)] |> List.filter(fun i -> not(doTermsShareDivisor x i))).Length)
-  printfn "Starting..."
-  let nscore = [2.0..1000000.0] |> List.map(fun n -> (n, (n / phi n)))
-  printfn "Getting Max..."
-  fst (nscore |> List.maxBy(fun ns -> snd ns))
+  let nscore = [2.0..520000.0] |> List.map(fun n -> (n, (n / float(phi (int n)))))
+  fst (nscore |> List.maxBy(fun ns -> snd ns))  
 
-// QX:
-let q64 x = 1
+// Q99: Which base/exponent pair in the file has the greatest numerical value?
+let q64 x = 
+  let lines = File.ReadAllLines("q64_base_exp.txt") |> Array.map(fun l -> l.Split(',') |> Array.map(fun p -> Double.Parse(p)))
+  let rec findMax curri maxval maxi =
+    if lines.Length = curri then maxi + 1
+    else
+      let line = lines.[curri]
+      let b, e = line.[0], line.[1]
+      let lval = e * log (b)
+      if lval > maxval then findMax (curri + 1) lval curri
+      else findMax (curri + 1) maxval maxi
 
-// QX:
-let q65 x = 1
+  findMax 0 0.0 0
 
-// QX:
-let q66 x = 1
+// Q81: Find the minimal path sum from the top left to the bottom right by 
+// moving right and down.:
+let q65 x = 
+  let matrix = File.ReadAllLines("q65_matrix.txt") |> Array.map(fun l -> l.Split(',') |> Array.map (fun t -> Int64.Parse t))
+  let scores = Array.init matrix.Length (fun y -> Array.init matrix.[0].Length (fun x -> Int64.MaxValue))
+  
+  let rec populateScores x y =
+    if y = scores.Length then ()
+    elif x = scores.[y].Length then populateScores 0 (y + 1)
+    elif x = 0 && y = 0 then
+      scores.[x].[y] <- matrix.[x].[y]
+      populateScores (x + 1) y
+    else
+      let s1 = if x = 0 then Int64.MaxValue else scores.[x - 1].[y]
+      let s2 = if y = 0 then Int64.MaxValue else scores.[x].[y - 1]
+      scores.[x].[y] <- (matrix.[x].[y] + min s1 s2)
+      populateScores (x + 1) y    
+  populateScores 0 0
+  scores.[79].[79]
+
+// Q54: How many hands did player one win in the game of poker?
+let q66 x = 
+  let hands = File.ReadAllLines("q66_poker.txt") |> Array.map(fun l -> l.Split(' '))
+  let getCardValue c =
+    match c with
+    | 'A' -> 15
+    | 'K' -> 14
+    | 'Q' -> 13
+    | 'J' -> 12
+    | 'T' -> 10
+    | _ -> int (c) - int('0')
+    
+
+  let sumLoseCards (cards:seq<int * int>) =
+    let values = cards |> Seq.map(fun vc -> fst vc) |> Seq.sort |> Seq.toList    
+    let score = values |> List.mapi(fun i v -> v + (pown v i)) |> List.sum
+    printfn "Values: %A score: %d" values score
+    score
+
+  let scoreHand (hand:array<string>) =
+    let values = hand |> Array.map(fun c -> c.Chars(0)) |> Array.sort
+    let valuesAsNum = values |> Array.map(fun v -> getCardValue v) |> Array.sort
+    let valueCounts = valuesAsNum |> Seq.distinct |> Seq.map(fun v -> v, valuesAsNum.Count(fun v2 -> v2 = v))
+    let suits = hand |> Array.map(fun c -> c.Chars(1))
+    let isSameSuit = (suits |> Seq.distinct) |> Seq.length = 1
+    let isStraight = valuesAsNum.Last() - valuesAsNum.First() = 4
+    
+    // Royaly
+    if isStraight && isSameSuit && valuesAsNum.Last() = 14 then Int32.MaxValue
+    // Straight Flush
+    elif isStraight && isSameSuit then 
+      10000000 + valuesAsNum.Last()
+    else
+      // Four of a Kind
+      let fourOfkind = valueCounts.Where(fun vc -> snd vc = 4) 
+      if fourOfkind.Count() = 1 then 9000000 + (100 * fst (fourOfkind.First())) + fst (valueCounts.Single(fun vc -> snd vc = 1))
+      // Full house
+      elif (Seq.length valueCounts) = 2 && valueCounts.Where(fun vc -> snd vc = 3).Count() = 1 then 
+        let sorted = valueCounts |> Seq.sortBy(fun vc -> snd vc)
+        8000000 + (fst (sorted.First())) + (fst (sorted.ElementAt(1)) * 100)
+      // Flush
+      elif isSameSuit then 7000000 + valuesAsNum.Last()
+      // Straight
+      elif isStraight then 6000000 + valuesAsNum.Last()
+      // 3 of a kind
+      elif valueCounts.Where(fun vc -> snd vc = 3).Count() = 1 then
+        let highest = valueCounts.SingleOrDefault(fun vc -> snd vc = 3)
+        5000000 + (fst highest * 100000) + sumLoseCards (valueCounts.Where(fun vc -> snd vc = 1))
+      // 2 Pair
+      elif valueCounts.Count(fun vc -> snd vc = 2) = 2 then
+        let remScores = valueCounts |> Seq.sumBy(fun vc -> snd vc * 100 + fst vc)
+        4000000 + remScores
+      // 1 Pair
+      else
+        let pair = valueCounts.Where(fun vc -> snd vc = 2)
+        if pair.Count() = 1 then 3000000 + (fst (pair.First()) * 100000) + sumLoseCards (valueCounts.Where(fun vc -> snd vc = 1))
+        else sumLoseCards (valueCounts)
+  
+  let player1winningHands =
+    let split = hands |> Array.map(fun both -> (both |> Seq.take(5) |> Seq.toArray, both |> Seq.skip(5) |> Seq.toArray))
+    (*split.Take(10) |> Seq.iter(fun s -> 
+      let h1 = fst s
+      let h2 = snd s
+      printfn "Player 1 [%A -> %d] Player2[%A -> %d]" h1 (scoreHand h1) h2 (scoreHand h2)
+    ) *)
+    let winning = split |> Array.map(fun hands -> if scoreHand(fst hands) > scoreHand(snd hands) then 1 else 0)
+    winning |> Array.sum
+    
+  player1winningHands
 
 // QX:
 let q67 x = 1
