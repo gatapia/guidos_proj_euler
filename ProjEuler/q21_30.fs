@@ -74,7 +74,6 @@ let q26 x =
   let rec q26Aux (lst:list<int64>) idx acc =        
     if idx = lst.Length then acc
     else
-      if idx % 10000 = 0 then printfn "idx:%d acc:%d len:%d" idx acc lst.Length
       let num = lst.[idx]
       let sum = num.ToString() |> Seq.sumBy(fun c -> cache.[c])
       

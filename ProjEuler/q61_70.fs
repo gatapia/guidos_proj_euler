@@ -76,7 +76,8 @@ let q63 x =
 
 // Q99: Which base/exponent pair in the file has the greatest numerical value?
 let q64 x = 
-  let lines = File.ReadAllLines("q64_base_exp.txt") |> Array.map(fun l -> l.Split(',') |> Array.map(fun p -> Double.Parse(p)))
+  let spAndParse = Array.map(fun (l:string) -> l.Split(',') |> Array.map(fun p -> Double.Parse(p)))
+  let lines = File.ReadAllLines("q64_base_exp.txt") |> spAndParse
   let rec findMax curri maxval maxi =
     if lines.Length = curri then maxi + 1
     else
@@ -122,9 +123,10 @@ let getCardValue c =
     
 
 let sumLoseCards (cards:seq<int * int>) =
-  let values = cards |> Seq.map(fun vc -> fst vc) |> Seq.sort |> Seq.toList    
-  let score = values |> List.mapi(fun i v -> v + (pown v i)) |> List.sum
-  score
+  let getValues = Seq.map(fun vc -> fst vc) >> Seq.sort >> Seq.toList
+  let values = cards |> getValues
+  let sumScores = List.mapi(fun i v -> v + (pown v i)) >> List.sum
+  values |> sumScores
 
 let scoreHand (hand:array<string>) =
   let values = hand |> Array.map(fun c -> c.Chars(0)) |> Array.sort
@@ -183,20 +185,39 @@ let q66 x =
   player1winningHands
 
 // Q71: Listing reduced proper fractions in ascending order of size.
+// Need a binary lookup for each denominator and get the next lowest
 let q67 x =     
   let maxD = 1000000L
   let cache = new Dictionary<int64, bool>()  
-  let rec addNewFractionAux n d lst =        
-    if n = d || d = 0L then 
-      if n = maxD then lst
-      else 
-        printfn "n: %d d: %d lst: %d" (n + 1L) maxD (lst |> List.length)
-        addNewFractionAux (n + 1L) maxD lst
-    elif d % n = 0L || Utils.doNumbersShareDivisorCached n d cache then addNewFractionAux n (d - 1L) lst
-    else addNewFractionAux n (d - 1L) ((n, d, float(n)/float(d))::lst)
+  let target = float(3) / float(7)
+    
+     
+  let findClosestLessThanHCFWithDenenom d =        
+    let getValueOfNDPair n = float(n)/float(d)
 
-  let allFractions = addNewFractionAux 1L maxD [] |> List.sortBy(fun (n,d,v) -> v)
-  allFractions.[(allFractions |> List.findIndex(fun (n,d,v) -> n = 3L && d = 7L)) + 1]
+    let rec findNextLowestProperFunction n =
+      if Utils.doNumbersShareDivisorCached n d cache then findNextLowestProperFunction (n - 1L)
+      else (n, getValueOfNDPair n)
+    
+    // Binary search style search for closes value
+    let rec findClosestLessThanHCFWithDenenomAux low hi curr =            
+      if (hi < low) then curr
+      else 
+        let mid = low + ((hi - low) / 2L)      
+        printfn "findClosestLessThanHCFWithDenenomAux low:%d hi:%d mid:%d curr:%A" low hi mid curr
+        let v = getValueOfNDPair mid
+        let cn,cv = curr
+        let curr = (mid, getValueOfNDPair mid)    
+        if v < target then findClosestLessThanHCFWithDenenomAux mid hi curr
+        else findClosestLessThanHCFWithDenenomAux low mid curr
+    let curr = ((d/2L), getValueOfNDPair (d / 2L))
+    
+    let closest = findClosestLessThanHCFWithDenenomAux 1L d curr
+    findNextLowestProperFunction (fst closest)
+    // Now we need to find on that is a proper reduced fraction
+
+  let closest = [2L..maxD] |> List.map (fun d -> findClosestLessThanHCFWithDenenom d) |> List.maxBy(fun t -> snd t)
+  fst closest
 
 // QX:
 let q68 x = 1
