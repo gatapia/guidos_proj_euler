@@ -135,6 +135,19 @@ namespace ProjEulerTests
       Assert.AreEqual(new[] {1, 2, 4, 71, 142, 284}, Utils.getAllDivisors(284, true));
     }
 
+    [Test] public void Test_doNumbersShareDivisor_true_when_share_divs() 
+    {
+      Assert.IsTrue(Utils.doNumbersShareDivisor(500, 50));
+      Assert.IsTrue(Utils.doNumbersShareDivisor(87623, 87623 * 2));
+      Assert.IsTrue(Utils.doNumbersShareDivisor(87623, 87623 * 4214));
+      Assert.IsTrue(Utils.doNumbersShareDivisor(997 , 997  * 149));
+    }
+
+    [Test] public void Test_doNumbersShareDivisor_false_when_do_not_share() 
+    {      
+      Assert.IsFalse(Utils.doNumbersShareDivisor(997 , 149));
+    }
+
     [Test] public void Test_numToWord()
     {      
       Assert.AreEqual("Zero".Replace("-", " ").ToLower(), Utils.numToWord(0));

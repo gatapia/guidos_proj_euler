@@ -5,6 +5,7 @@ open System.IO
 open System.Text
 open System.Text.RegularExpressions
 open System.Collections
+open System.Collections.Generic
 open System.Linq
 
 // Q57: In the first one-thousand expansions, how many fractions 
@@ -107,78 +108,95 @@ let q65 x =
   populateScores 0 0
   scores.[79].[79]
 
+////////////////////////////////////////////////////////////////////////////////
+// q66 POKER
+////////////////////////////////////////////////////////////////////////////////
+let getCardValue c =
+  match c with
+  | 'A' -> 14
+  | 'K' -> 13
+  | 'Q' -> 12
+  | 'J' -> 11
+  | 'T' -> 10
+  | _ -> int (c) - int('0')
+    
+
+let sumLoseCards (cards:seq<int * int>) =
+  let values = cards |> Seq.map(fun vc -> fst vc) |> Seq.sort |> Seq.toList    
+  let score = values |> List.mapi(fun i v -> v + (pown v i)) |> List.sum
+  score
+
+let scoreHand (hand:array<string>) =
+  let values = hand |> Array.map(fun c -> c.Chars(0)) |> Array.sort
+  let valuesAsNum = values |> Array.map(fun v -> getCardValue v) |> Array.sort
+  let valueCounts = valuesAsNum |> Seq.distinct |> Seq.map(fun v -> v, valuesAsNum.Count(fun v2 -> v2 = v))
+  let suits = hand |> Array.map(fun c -> c.Chars(1))
+  let isSameSuit = (suits |> Seq.distinct) |> Seq.length = 1
+  let isStraight = valueCounts.Count() = 5 &&  valuesAsNum.Last() - valuesAsNum.First() = 4
+    
+  // Royaly
+  if isStraight && isSameSuit && valuesAsNum.Last() = 14 then 
+    Int32.MaxValue
+  // Straight Flush
+  elif isStraight && isSameSuit then 
+    100000000 + valuesAsNum.Last()
+  else
+    // Four of a Kind
+    let fourOfkind = valueCounts.Where(fun vc -> snd vc = 4) 
+    if fourOfkind.Count() = 1 then 
+      90000000 + (100 * fst (fourOfkind.First())) + fst (valueCounts.Single(fun vc -> snd vc = 1))
+    // Full house
+    elif (Seq.length valueCounts) = 2 && valueCounts.Where(fun vc -> snd vc = 3).Count() = 1 then 
+      let sorted = valueCounts |> Seq.sortBy(fun vc -> snd vc)
+      80000000 + (fst (sorted.First())) + (fst (sorted.ElementAt(1)) * 100)
+    // Flush
+    elif isSameSuit then 
+      70000000 + valuesAsNum.Last()
+    // Straight
+    elif isStraight then 
+      60000000 + valuesAsNum.Last()
+    // 3 of a kind
+    elif valueCounts.Where(fun vc -> snd vc = 3).Count() = 1 then
+      let highest = valueCounts.SingleOrDefault(fun vc -> snd vc = 3)
+      50000000 + (fst highest * 100000) + sumLoseCards (valueCounts.Where(fun vc -> snd vc = 1))
+    // 2 Pair
+    elif valueCounts.Count(fun vc -> snd vc = 2) = 2 then
+      let remScores = valueCounts |> Seq.sumBy(fun vc -> snd vc * 100 * fst vc)
+      40000000 + remScores
+    // 1 Pair
+    else      
+      let pair = valueCounts.Where(fun vc -> snd vc = 2)
+      if pair.Count() = 1 then 
+        30000000 + (fst (pair.First()) * 100000) + sumLoseCards (valueCounts.Where(fun vc -> snd vc = 1))
+      else 
+        sumLoseCards (valueCounts)
+
 // Q54: How many hands did player one win in the game of poker?
 let q66 x = 
-  let hands = File.ReadAllLines("q66_poker.txt") |> Array.map(fun l -> l.Split(' '))
-  let getCardValue c =
-    match c with
-    | 'A' -> 15
-    | 'K' -> 14
-    | 'Q' -> 13
-    | 'J' -> 12
-    | 'T' -> 10
-    | _ -> int (c) - int('0')
-    
-
-  let sumLoseCards (cards:seq<int * int>) =
-    let values = cards |> Seq.map(fun vc -> fst vc) |> Seq.sort |> Seq.toList    
-    let score = values |> List.mapi(fun i v -> v + (pown v i)) |> List.sum
-    printfn "Values: %A score: %d" values score
-    score
-
-  let scoreHand (hand:array<string>) =
-    let values = hand |> Array.map(fun c -> c.Chars(0)) |> Array.sort
-    let valuesAsNum = values |> Array.map(fun v -> getCardValue v) |> Array.sort
-    let valueCounts = valuesAsNum |> Seq.distinct |> Seq.map(fun v -> v, valuesAsNum.Count(fun v2 -> v2 = v))
-    let suits = hand |> Array.map(fun c -> c.Chars(1))
-    let isSameSuit = (suits |> Seq.distinct) |> Seq.length = 1
-    let isStraight = valuesAsNum.Last() - valuesAsNum.First() = 4
-    
-    // Royaly
-    if isStraight && isSameSuit && valuesAsNum.Last() = 14 then Int32.MaxValue
-    // Straight Flush
-    elif isStraight && isSameSuit then 
-      10000000 + valuesAsNum.Last()
-    else
-      // Four of a Kind
-      let fourOfkind = valueCounts.Where(fun vc -> snd vc = 4) 
-      if fourOfkind.Count() = 1 then 9000000 + (100 * fst (fourOfkind.First())) + fst (valueCounts.Single(fun vc -> snd vc = 1))
-      // Full house
-      elif (Seq.length valueCounts) = 2 && valueCounts.Where(fun vc -> snd vc = 3).Count() = 1 then 
-        let sorted = valueCounts |> Seq.sortBy(fun vc -> snd vc)
-        8000000 + (fst (sorted.First())) + (fst (sorted.ElementAt(1)) * 100)
-      // Flush
-      elif isSameSuit then 7000000 + valuesAsNum.Last()
-      // Straight
-      elif isStraight then 6000000 + valuesAsNum.Last()
-      // 3 of a kind
-      elif valueCounts.Where(fun vc -> snd vc = 3).Count() = 1 then
-        let highest = valueCounts.SingleOrDefault(fun vc -> snd vc = 3)
-        5000000 + (fst highest * 100000) + sumLoseCards (valueCounts.Where(fun vc -> snd vc = 1))
-      // 2 Pair
-      elif valueCounts.Count(fun vc -> snd vc = 2) = 2 then
-        let remScores = valueCounts |> Seq.sumBy(fun vc -> snd vc * 100 + fst vc)
-        4000000 + remScores
-      // 1 Pair
-      else
-        let pair = valueCounts.Where(fun vc -> snd vc = 2)
-        if pair.Count() = 1 then 3000000 + (fst (pair.First()) * 100000) + sumLoseCards (valueCounts.Where(fun vc -> snd vc = 1))
-        else sumLoseCards (valueCounts)
+  let hands = File.ReadAllLines("q66_poker.txt") |> Array.map(fun l -> l.Split(' '))  
   
   let player1winningHands =
-    let split = hands |> Array.map(fun both -> (both |> Seq.take(5) |> Seq.toArray, both |> Seq.skip(5) |> Seq.toArray))
-    (*split.Take(10) |> Seq.iter(fun s -> 
-      let h1 = fst s
-      let h2 = snd s
-      printfn "Player 1 [%A -> %d] Player2[%A -> %d]" h1 (scoreHand h1) h2 (scoreHand h2)
-    ) *)
+    let split = hands |> Array.map(fun both -> (both |> Seq.take(5) |> Seq.toArray, both |> Seq.skip(5) |> Seq.toArray))    
     let winning = split |> Array.map(fun hands -> if scoreHand(fst hands) > scoreHand(snd hands) then 1 else 0)
     winning |> Array.sum
     
   player1winningHands
 
-// QX:
-let q67 x = 1
+// Q71: Listing reduced proper fractions in ascending order of size.
+let q67 x =     
+  let maxD = 1000000L
+  let cache = new Dictionary<int64, bool>()  
+  let rec addNewFractionAux n d lst =        
+    if n = d || d = 0L then 
+      if n = maxD then lst
+      else 
+        printfn "n: %d d: %d lst: %d" (n + 1L) maxD (lst |> List.length)
+        addNewFractionAux (n + 1L) maxD lst
+    elif d % n = 0L || Utils.doNumbersShareDivisorCached n d cache then addNewFractionAux n (d - 1L) lst
+    else addNewFractionAux n (d - 1L) ((n, d, float(n)/float(d))::lst)
+
+  let allFractions = addNewFractionAux 1L maxD [] |> List.sortBy(fun (n,d,v) -> v)
+  allFractions.[(allFractions |> List.findIndex(fun (n,d,v) -> n = 3L && d = 7L)) + 1]
 
 // QX:
 let q68 x = 1

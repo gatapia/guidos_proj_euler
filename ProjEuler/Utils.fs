@@ -247,6 +247,34 @@ let getAllDivisors x inclusive =
   let initialDiv = if inclusive then x else (x - 1)
   getAllDivisorsAux x initialDiv []
 
+let getAllPrimeDivisors x inclusive (cache:Dictionary<int64, bool>) =
+  let rec getAllPrimeDivisorsAux prime lst =
+    let lst = if x % prime = 0L then (prime :: lst) else lst
+    
+    if prime = 2L then lst
+    else getAllPrimeDivisorsAux (getPrevPrimeCached prime cache) lst
+  
+  let start = if inclusive then x + 1L else x
+  getAllPrimeDivisorsAux (getPrevPrimeCached start cache) []
+
+let doNumbersShareDivisorCached a b (cache:Dictionary<int64, bool>) =
+  let commonDivisors = [2L;3L;5L]
+  if a = b || a = 1L || b = 1L || b % a = 0L || (commonDivisors |> List.exists(fun d -> a % d = 0L && b % d = 0L)) then true
+  elif isPrimeCached (int64 a) cache || isPrimeCached (int64 b) cache then false
+  else
+    let aDivs, bDivs = getAllPrimeDivisors a true cache |> List.tail, getAllPrimeDivisors b true cache |> List.tail        
+    let rec doNumbersShareDivisorAux ai bi =   
+      if (ai = aDivs.Length || bi = bDivs.Length) then false
+      else
+        let ad, bd = aDivs.[ai], bDivs.[bi]
+        if ad = bd then true
+        elif ad > bd then doNumbersShareDivisorAux ai (bi + 1)
+        else doNumbersShareDivisorAux (ai + 1) bi
+
+    doNumbersShareDivisorAux 0 0
+
+let doNumbersShareDivisor a b = doNumbersShareDivisorCached a b (new Dictionary<int64, bool>())
+
 let sumDivisors x = getAllDivisors x false |> List.sum
 
 let areAmicable x y = (sumDivisors x) = y && (sumDivisors y) = x
