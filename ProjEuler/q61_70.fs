@@ -238,18 +238,26 @@ let q68 x =
 // Q62: Find the smallest cube for which exactly five permutations of its 
 // digits are cube.
 let q69 x = 
-  let rec find root =
-    let cube = root ** 3.0f    
-    let allCombinations = Utils.getAllCombinations (root.ToString().Split('.').[0])    
-    let cubes = allCombinations.Where(fun s ->
-      let l = Single.Parse(s)      
-      let root = l ** (1.0f/3.0f)
-      Utils.isNatural(float(root))
-    )
+  let cube_cache = new Dictionary<int64, bool>()
+  let cube_list = new List<int64>()  
+    
+  ignore [for i in 1L..1000000L -> 
+    let c = i * i * i
+    cube_list.Add(c)
+    cube_cache.Add(c, true)]
+  printfn "initialised"
+  let isCube x = cube_cache.ContainsKey x && cube_cache.[x]
+  
+  let rec find idx =        
+    let cube = cube_list.[idx]
+    if idx % 1000 = 0 then printfn "find idx: %d cube: %d" idx cube
+    let allCombinations = Utils.getAllCombinations (cube.ToString())    
+    let cubes = allCombinations.Where(fun s -> isCube (Int64.Parse(s)))
     
     if cubes.Count() = 5 then cube
-    else find (root + 1.0f)
-  find 2.0f
+    else find (idx + 1)
+  let start_idx = cube_list.FindIndex(fun c -> c > 1000L)
+  find start_idx
      
 
 // QX:
