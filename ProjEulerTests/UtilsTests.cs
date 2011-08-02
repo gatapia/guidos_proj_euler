@@ -134,18 +134,6 @@ namespace ProjEulerTests
       Assert.AreEqual(new[] {1, 2, 4, 71, 142, 284}, Utils.getAllDivisors(284, true));
     }
 
-    [Test] public void Test_doNumbersShareDivisor_true_when_share_divs() 
-    {
-      Assert.IsTrue(Utils.doNumbersShareDivisor(500, 50));
-      Assert.IsTrue(Utils.doNumbersShareDivisor(87623, 87623 * 2));
-      Assert.IsTrue(Utils.doNumbersShareDivisor(87623, 87623 * 4214));
-      Assert.IsTrue(Utils.doNumbersShareDivisor(997 , 997  * 149));
-    }
-
-    [Test] public void Test_doNumbersShareDivisor_false_when_do_not_share() 
-    {      
-      Assert.IsFalse(Utils.doNumbersShareDivisor(997 , 149));
-    }
 
     [Test] public void Test_euclidian_HCF() {
       Assert.AreEqual(51, Utils.euclidianHCF(1989, 867));
@@ -235,8 +223,8 @@ namespace ProjEulerTests
 
     [Test] public void Test_getAllCombinations()
     {
-      CollectionAssert.AreEquivalent(new [] {"123", "132", "213", "231", "312", "321"}, Utils.getAllCombinations("123"));      
-      CollectionAssert.AreEquivalent(new [] {"1234", "1243", "1324", "1342", "1423", "1432", "2134", "2143", "2314", "2341", "2413", "2431", "3124", "3142", "3214", "3241", "3412", "3421", "4123", "4132", "4213", "4231", "4312", "4321"}, Utils.getAllCombinations("1234"));
+      CollectionAssert.AreEquivalent(new [] {"123", "132", "213", "231", "312", "321"}, Utils.getAllCombinations2("123"));      
+      CollectionAssert.AreEquivalent(new [] {"1234", "1243", "1324", "1342", "1423", "1432", "2134", "2143", "2314", "2341", "2413", "2431", "3124", "3142", "3214", "3241", "3412", "3421", "4123", "4132", "4213", "4231", "4312", "4321"}, Utils.getAllCombinations2("1234"));
     }
   }
 }

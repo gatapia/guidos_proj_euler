@@ -74,6 +74,25 @@ let getAllCombinations (str:string) =
   heapPermute strc.Length lst strc
   lst
 
+// This algorithm from: 
+// http://stackoverflow.com/questions/756055/listing-all-permutations-of-a-string-integer
+let getAllCombinations2 (str:string) =
+  let rec go (acc:List<string>) (char_list:array<char>) k m =
+    if k = m then 
+      acc.Add(new String(char_list))
+    else
+      for i in [k..m] do
+        swapArrayItems char_list k i
+        go acc char_list (k + 1) m
+        swapArrayItems char_list k i
+
+  let setper (char_list:array<char>) =
+    let acc = new List<string>()
+    go acc char_list 0 (char_list.Length - 1)
+    acc
+
+  setper(str.ToCharArray())
+
 let isPandigital n =
   let str = n.ToString()
   let chars = str.ToCharArray() |> Seq.distinct |> Seq.sort |> Seq.toArray
@@ -257,29 +276,10 @@ let getAllPrimeDivisors x inclusive (cache:Dictionary<int64, bool>) =
   let start = if inclusive then x + 1L else x
   getAllPrimeDivisorsAux (getPrevPrimeCached start cache) []
 
-let rec euclidianHCF a b =
+let rec euclidianHCF (a:int64) (b:int64) =
   let l, s = (if a > b then a else b), (if a > b then b else a)
-  if s = 0L then l
-  else euclidianHCF (l - s) s
-  
-
-let doNumbersShareDivisorCached a b (cache:Dictionary<int64, bool>) =
-  let commonDivisors = [2L;3L;5L]
-  if a = b || a = 1L || b = 1L || b % a = 0L || (commonDivisors |> List.exists(fun d -> a % d = 0L && b % d = 0L)) then true
-  elif isPrimeCached (int64 a) cache || isPrimeCached (int64 b) cache then false
-  else
-    let aDivs, bDivs = getAllPrimeDivisors a true cache |> List.tail, getAllPrimeDivisors b true cache |> List.tail        
-    let rec doNumbersShareDivisorAux ai bi =   
-      if (ai = aDivs.Length || bi = bDivs.Length) then false
-      else
-        let ad, bd = aDivs.[ai], bDivs.[bi]
-        if ad = bd then true
-        elif ad > bd then doNumbersShareDivisorAux ai (bi + 1)
-        else doNumbersShareDivisorAux (ai + 1) bi
-
-    doNumbersShareDivisorAux 0 0
-
-let doNumbersShareDivisor a b = doNumbersShareDivisorCached a b (new Dictionary<int64, bool>())
+  if s = LanguagePrimitives.GenericZero then l
+  else euclidianHCF (l - s) s  
 
 let sumDivisors x = getAllDivisors x false |> List.sum
 

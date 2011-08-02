@@ -238,27 +238,43 @@ let q68 x =
 // Q62: Find the smallest cube for which exactly five permutations of its 
 // digits are cube.
 let q69 x = 
-  let cube_cache = new Dictionary<int64, bool>()
-  let cube_list = new List<int64>()  
-    
-  ignore [for i in 1L..1000000L -> 
+  let cube_chars_sorted_cache = new Dictionary<string, int>()
+  let cube_list = new List<int64>()    
+  let get_key num = new String(num.ToString().ToCharArray() |> Array.sort)
+
+  ignore [for i in 1L..50000L -> 
     let c = i * i * i
     cube_list.Add(c)
-    cube_cache.Add(c, true)]
-  printfn "initialised"
-  let isCube x = cube_cache.ContainsKey x && cube_cache.[x]
+    let key = get_key c
+    
+    if cube_chars_sorted_cache.ContainsKey(key) then 
+      cube_chars_sorted_cache.[key] <- cube_chars_sorted_cache.[key] + 1
+    else  cube_chars_sorted_cache.Add(key, 1)
+  ]
   
   let rec find idx =        
     let cube = cube_list.[idx]
-    if idx % 1000 = 0 then printfn "find idx: %d cube: %d" idx cube
-    let allCombinations = Utils.getAllCombinations (cube.ToString())    
-    let cubes = allCombinations.Where(fun s -> isCube (Int64.Parse(s)))
-    
-    if cubes.Count() = 5 then cube
+    if cube_chars_sorted_cache.[get_key cube] = 5 then cube
     else find (idx + 1)
-  let start_idx = cube_list.FindIndex(fun c -> c > 1000L)
+
+  let start_idx = cube_list.FindIndex(fun c -> c > 50000L)
   find start_idx
      
 
-// QX:
-let q70 x = 1
+// Q73 :How many fractions lie between 1/3 and 1/2 in a sorted set of 
+// reduced proper fractions?
+let q70 x = 
+  let value n d = n/d
+  let min, max =  1.0/3.0, 0.5
+  let rec go acc n d =
+    if d > 12000L then acc
+    else
+      let v = float(n) / float(d)
+      let valid = v > min && v < max && Utils.euclidianHCF n d = 1L
+      let acc = if valid then (acc + 1L) else acc
+      // Next
+      let n = n + 1L
+      if n = d then go acc 1L (d + 1L)
+      else go acc n d
+    
+  go 0L 1L 2L

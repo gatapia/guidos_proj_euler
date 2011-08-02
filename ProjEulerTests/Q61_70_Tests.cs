@@ -13,7 +13,7 @@ namespace ProjEulerTests
     [Test] public void Q66() { Assert.AreEqual(376, Q61_70.q66(String.Empty)); }      
     [Test] public void Q67() { Assert.AreEqual(-1, Q61_70.q67(String.Empty)); }  
     [Test] public void Q68() { Assert.AreEqual(190569291, Q61_70.q68(String.Empty)); }  
-    [Test] public void Q69() { Assert.AreEqual(-1, Q61_70.q69(String.Empty)); }  
-    [Test] public void Q70() { Assert.AreEqual(-1, Q61_70.q70(String.Empty)); }       
+    [Test] public void Q69() { Assert.AreEqual(127035954683, Q61_70.q69(String.Empty)); }  
+    [Test] public void Q70() { Assert.AreEqual(7295372, Q61_70.q70(String.Empty)); }       
   }
 }
