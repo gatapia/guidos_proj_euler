@@ -71,16 +71,14 @@ let q26 x =
   let cache = new Dictionary<char, int64>()
   [0L..9L] |> List.iter (fun(i) -> cache.Add(i.ToString().ToCharArray().[0], pown i 5))
 
-  let rec q26Aux (lst:list<int64>) idx acc =        
-    if idx = lst.Length then acc
+  let rec q26Aux num acc =        
+    if num > 355000L then acc
     else
-      let num = lst.[idx]
-      let sum = num.ToString() |> Seq.sumBy(fun c -> cache.[c])
-      
-      if sum = num then q26Aux lst (idx + 1) (acc + sum)
-      else q26Aux lst (idx + 1) acc
+      let sum = num.ToString().ToCharArray() |> Array.sumBy(fun c -> cache.[c])      
+      if sum = num then  q26Aux (num + 1L) (acc + sum)
+      else q26Aux (num + 1L) acc
     
-  q26Aux [2L..355000L] 0 0L
+  q26Aux 1000L 0L
 
 // Q24: What is the millionth lexicographic permutation of the digits 
 // 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?

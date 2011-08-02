@@ -72,7 +72,6 @@ let thousandDigitNum =
   "71636269561882670428252483600823257530420752963450"
 
 let getProdOf5ConseqDigits idx =
-  if idx >= thousandDigitNum.Length - 5 then raise (Exception("Err"))
   let sub = thousandDigitNum.Substring(idx, 5)
   sub.ToCharArray() |> Seq.map (fun c -> int (Char.GetNumericValue(c))) |> Seq.reduce (fun acc char -> (char * acc))
 

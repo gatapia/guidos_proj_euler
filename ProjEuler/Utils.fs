@@ -189,7 +189,7 @@ let rec getPrevPrime (from:int64) =
   match from with
   | 3L      -> 2L  
   | _ ->    
-    if from <= 2L then raise (Exception("Error"))
+    if from <= 2L then failwith "Cannot call getPrevRime with a value <= 2"
     let x = if from % 2L = 0L then from - 1L else from - 2L
     if isPrime x then x
     else getPrevPrime x
@@ -198,7 +198,7 @@ let rec getPrevPrimeCached (from:int64) (cache:Dictionary<int64, bool>) =
   match from with
   | 3L      -> 2L  
   | _ ->    
-    if from <= 2L then raise (Exception("Error"))
+    if from <= 2L then failwith "Cannot call getPrevRime with a value <= 2"
     let x = if from % 2L = 0L then from - 1L else from - 2L
     if isPrimeCached x cache then x
     else getPrevPrimeCached x cache

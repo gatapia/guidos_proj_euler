@@ -135,7 +135,7 @@ let q45 x =
 // Q:32 Find the sum of all products whose multiplicand/multiplier/product 
 // identity can be written as a 1 through 9 pandigital.
 let q46 x = 
-  raise (NotImplementedException())
+  failwith "Not Implemented"
   10
 
 // Q56: Considering natural numbers of the form, a^b, where a, b < 100, 

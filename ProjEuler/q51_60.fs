@@ -153,8 +153,7 @@ let q56 x =
       else
         get3PermutationTerms num (idx + 1)
   
-  let rec findFirstSetOfPerms i =
-    if i >= allprimes.Length - 4 then raise (Exception("Err"))
+  let rec findFirstSetOfPerms i =    
     let prime = allprimes.[i]
     // Ignore primes with repeats digits
     if prime = 1487L then findFirstSetOfPerms (i + 1)
@@ -222,19 +221,24 @@ let q60 x =
   ['0'..'9'] |> List.iter(fun c -> charCache.Add(c, pown (int(c) - int('0')) 2))
   let nextTerm x = x.ToString().ToCharArray() |> Array.map(fun c -> charCache.[c]) |> Array.sum  
   
-  let rec endsIn89 n lst =
+  let rec endsIn89 n (lst:List<int>) =
     if cache.ContainsKey(n) then 
-      lst |> List.iter(fun i -> cache.Add(i, cache.[n]))
-      cache.[n]
+      let v = cache.[n]
+      lst.ForEach(fun i -> cache.Add(i, v))
+      v
     else
-      let lst = n::lst    
+      lst.Add(n)
       if n = 89 then 
-        lst |> List.iter(fun i -> cache.Add(i, true))
+        printfn "89) NUM: %d LEN: %d" (lst.First()) lst.Count
+        lst.ForEach(fun i -> cache.Add(i, true))
         true
       elif n = 1 then 
-        lst |> List.iter(fun i -> cache.Add(i, false))
+        printfn "01) NUM: %d LEN: %d" (lst.First()) lst.Count
+        lst.ForEach(fun i -> cache.Add(i, false))
         false
-      else endsIn89 (int32(nextTerm n)) lst  
-  
-  let cnt = ([2..9999999] |> List.filter(fun n -> endsIn89 n [])).Length
+      else endsIn89 (nextTerm n) lst    
+  let lst = new List<int>()
+  let cnt = ([9999999..-1..2] |> List.filter(fun n -> 
+    lst.Clear()
+    endsIn89 n lst)).Length
   cnt
