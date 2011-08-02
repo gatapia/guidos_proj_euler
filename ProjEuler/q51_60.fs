@@ -218,27 +218,34 @@ let q59 x : int =
 let q60 x = 
   let cache = new Dictionary<int, bool>()
   let charCache = new Dictionary<char, int>()
-  ['0'..'9'] |> List.iter(fun c -> charCache.Add(c, pown (int(c) - int('0')) 2))
-  let nextTerm x = x.ToString().ToCharArray() |> Array.map(fun c -> charCache.[c]) |> Array.sum  
+  ['0'..'9'] |> List.iter(fun c -> charCache.Add(c, pown (int(c) - int('0')) 2))  
+  let sum_terms_cache = new Dictionary<string, int>()
+
+  let sum_terms x = x.ToString().ToCharArray() |> Array.map(fun c -> charCache.[c]) |> Array.sum
   
-  let rec endsIn89 n (lst:List<int>) =
-    if cache.ContainsKey(n) then 
-      let v = cache.[n]
-      lst.ForEach(fun i -> cache.Add(i, v))
-      v
+  let rec endsIn89 n (lst:List<int>) =        
+    if cache.ContainsKey(n) then       
+      lst.ForEach(fun i -> cache.Add(i, cache.[n]))
+      cache.[n]
     else
       lst.Add(n)
       if n = 89 then 
-        printfn "89) NUM: %d LEN: %d" (lst.First()) lst.Count
         lst.ForEach(fun i -> cache.Add(i, true))
         true
       elif n = 1 then 
-        printfn "01) NUM: %d LEN: %d" (lst.First()) lst.Count
         lst.ForEach(fun i -> cache.Add(i, false))
         false
-      else endsIn89 (nextTerm n) lst    
+      else endsIn89 (sum_terms n) lst    
   let lst = new List<int>()
-  let cnt = ([9999999..-1..2] |> List.filter(fun n -> 
+  // Fill Cache
+  [2..567] |> List.iter(fun n -> 
     lst.Clear()
-    endsIn89 n lst)).Length
-  cnt
+    ignore (endsIn89 n lst)
+  )
+
+  // Count matching sums
+  [2..9999999] |> List.filter(fun n -> 
+    let sos = sum_terms n
+    cache.ContainsKey(sos) && cache.[sos]
+  ) |> List.length
+
