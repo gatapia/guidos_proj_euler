@@ -185,31 +185,31 @@ let q66 x =
   player1winningHands
 
 // Q71: Listing reduced proper fractions in ascending order of size.
-// Need a binary lookup for each denominator and get the next lowest
+// TOO SLOW (12 min) AND WRONG ANSWER (2)
 let q67 x =     
   let maxD = 1000000L
-  let cache = new Dictionary<int64, bool>()  
   let target = float(3) / float(7)
     
      
   let findClosestLessThanHCFWithDenenom d =        
+    // if (d % 10000L = 0L) then printfn "findClosestLessThanHCFWithDenenom d:%d" d
     let getValueOfNDPair n = float(n)/float(d)
 
     let rec findNextLowestProperFunction n =
-      if Utils.doNumbersShareDivisorCached n d cache then findNextLowestProperFunction (n - 1L)
+      if Utils.euclidianHCF n d <> 1L then 
+        if (n = 1L) then (0L, 0.0)
+        else findNextLowestProperFunction (n - 1L)
       else (n, getValueOfNDPair n)
     
     // Binary search style search for closes value
     let rec findClosestLessThanHCFWithDenenomAux low hi curr =            
-      if (hi < low) then curr
-      else 
-        let mid = low + ((hi - low) / 2L)      
-        printfn "findClosestLessThanHCFWithDenenomAux low:%d hi:%d mid:%d curr:%A" low hi mid curr
-        let v = getValueOfNDPair mid
-        let cn,cv = curr
-        let curr = (mid, getValueOfNDPair mid)    
-        if v < target then findClosestLessThanHCFWithDenenomAux mid hi curr
-        else findClosestLessThanHCFWithDenenomAux low mid curr
+      let mid = low + ((hi - low) / 2L)          
+
+      if (hi < low || mid = low || mid = hi) then curr
+      else                   
+        let v = getValueOfNDPair mid        
+        if v < target then findClosestLessThanHCFWithDenenomAux mid hi (mid, v)
+        else findClosestLessThanHCFWithDenenomAux low mid (mid, v)
     let curr = ((d/2L), getValueOfNDPair (d / 2L))
     
     let closest = findClosestLessThanHCFWithDenenomAux 1L d curr
@@ -219,11 +219,38 @@ let q67 x =
   let closest = [2L..maxD] |> List.map (fun d -> findClosestLessThanHCFWithDenenom d) |> List.maxBy(fun t -> snd t)
   fst closest
 
-// QX:
-let q68 x = 1
+// Q76: How many different ways can one hundred be written as a sum of at 
+// least two positive integers?
+// Note: This algorithm was blatantly copied from: http://en.wikipedia.org/wiki/Partition_(number_theory)
+// with little or no appreciation of internals.
+let q68 x = 
+  let cache = new Dictionary<int * int, int>()
+  let rec pkn k n =    
+    if k > n then 0
+    elif k = n then 1
+    elif cache.ContainsKey((k, n)) then cache.[k, n]
+    else 
+      let v = (pkn (k+1) n) + (pkn k (n - k))
+      cache.Add((k, n), v)
+      v
+  (pkn 1 100) - 1
 
-// QX:
-let q69 x = 1
+// Q62: Find the smallest cube for which exactly five permutations of its 
+// digits are cube.
+let q69 x = 
+  let rec find root =
+    let cube = root ** 3.0f    
+    let allCombinations = Utils.getAllCombinations (root.ToString().Split('.').[0])    
+    let cubes = allCombinations.Where(fun s ->
+      let l = Single.Parse(s)      
+      let root = l ** (1.0f/3.0f)
+      Utils.isNatural(float(root))
+    )
+    
+    if cubes.Count() = 5 then cube
+    else find (root + 1.0f)
+  find 2.0f
+     
 
 // QX:
 let q70 x = 1

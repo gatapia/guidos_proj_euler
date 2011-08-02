@@ -2,7 +2,6 @@
 using System.Numerics;
 using Microsoft.FSharp.Core;
 using NUnit.Framework;
-using System.Linq;
 
 namespace ProjEulerTests
 {
@@ -147,6 +146,12 @@ namespace ProjEulerTests
     {      
       Assert.IsFalse(Utils.doNumbersShareDivisor(997 , 149));
     }
+
+    [Test] public void Test_euclidian_HCF() {
+      Assert.AreEqual(51, Utils.euclidianHCF(1989, 867));
+      Assert.AreEqual(51, Utils.euclidianHCF(867, 1989));
+      Assert.AreEqual(1, Utils.euclidianHCF(2267, 401));
+    }    
 
     [Test] public void Test_numToWord()
     {      

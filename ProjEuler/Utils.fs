@@ -257,6 +257,12 @@ let getAllPrimeDivisors x inclusive (cache:Dictionary<int64, bool>) =
   let start = if inclusive then x + 1L else x
   getAllPrimeDivisorsAux (getPrevPrimeCached start cache) []
 
+let rec euclidianHCF a b =
+  let l, s = (if a > b then a else b), (if a > b then b else a)
+  if s = 0L then l
+  else euclidianHCF (l - s) s
+  
+
 let doNumbersShareDivisorCached a b (cache:Dictionary<int64, bool>) =
   let commonDivisors = [2L;3L;5L]
   if a = b || a = 1L || b = 1L || b % a = 0L || (commonDivisors |> List.exists(fun d -> a % d = 0L && b % d = 0L)) then true
