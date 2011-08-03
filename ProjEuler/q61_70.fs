@@ -28,11 +28,15 @@ let q61 x =
 
 // Q58: Investigate the number of primes that lie on the diagonals of 
 // the spiral grid.
-// SLOW!!!
-let q62 x =
-  // Copied from q 28
+// SLOW!!! 22 secs 
+let q62 x =  
+  //let q62Aux2 accnp accp sl start =
+    
+    
+
+  // Copied from q25
   let rec q62Aux sidelength accnp accp (num:int) direction x y =    
-    let isp = (x = y || x = -y) && Utils.isPrime (int64 num)    
+    let isp = (x = y || x = -y) && Utils.isPrime (int64 num) 
     let diagaccnp, diagaccp = if isp then accnp, (accp + 1.0) else (accnp + 1.0), accp        
 
     if x <= 0 && x = y then q62Aux sidelength diagaccnp diagaccp (num + 1) 6 (x + 1) (y) 

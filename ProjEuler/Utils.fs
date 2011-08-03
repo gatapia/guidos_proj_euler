@@ -74,32 +74,15 @@ let getAllCombinations (str:string) =
   heapPermute strc.Length lst strc
   lst
 
-// This algorithm from: 
-// http://stackoverflow.com/questions/756055/listing-all-permutations-of-a-string-integer
-let getAllCombinations2 (str:string) =
-  let rec go (acc:List<string>) (char_list:array<char>) k m =
-    if k = m then 
-      acc.Add(new String(char_list))
-    else
-      for i in [k..m] do
-        swapArrayItems char_list k i
-        go acc char_list (k + 1) m
-        swapArrayItems char_list k i
-
-  let setper (char_list:array<char>) =
-    let acc = new List<string>()
-    go acc char_list 0 (char_list.Length - 1)
-    acc
-
-  setper(str.ToCharArray())
-
-let isPandigital n =
-  let str = n.ToString()
+let isStringPandigital (str:string) =
   let chars = str.ToCharArray() |> Seq.distinct |> Seq.sort |> Seq.toArray
   if chars.Length <> str.Length || (chars.[0] <> '0' && chars.[0] <> '1') then false
   else 
     let max = if chars.[0] = '0' then str.Length - 1 else str.Length
     chars.[chars.Length - 1] = max.ToString().Chars(0)
+
+let isPandigital n =
+  isStringPandigital (n.ToString())
 
 let isNatural n = n - float(int(n)) = 0.0
 

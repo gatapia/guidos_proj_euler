@@ -82,10 +82,12 @@ let q26 x =
 
 // Q24: What is the millionth lexicographic permutation of the digits 
 // 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
+// TODO: This would dramatically cut down time if we used an ordered 
+// permutation algorithm
 let q27 x = 
-  let digits = ['0';'1';'2';'3';'4';'5';'6';'7';'8';'9']
-  let lex = []
-  Seq.unfold
+  let lst = Utils.getAllCombinations "0123456789"
+  lst.Sort()
+  lst.Item(999999)
   
   
 // Q67: Find the maximum total from top to bottom in triangle.txt 

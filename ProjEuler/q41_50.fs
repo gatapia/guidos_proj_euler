@@ -135,8 +135,33 @@ let q45 x =
 // Q:32 Find the sum of all products whose multiplicand/multiplier/product 
 // identity can be written as a 1 through 9 pandigital.
 let q46 x = 
-  failwith "Not Implemented"
-  10
+  let max, min = 987654321, 123456789
+  let is9digpan_exp = ['1'..'9']
+  let is9digpan (str:string) = str.Length = 9 && (is9digpan_exp |> List.forall(fun c -> str.IndexOf(c) >= 0))
+  let is_possible num = 
+    let nstr = num.ToString()      
+    nstr.ToCharArray() |> Seq.distinct |> Seq.length = nstr.Length
+
+  let rec go acc n =    
+    let rec goAux acc m1 =      
+      let m2 = float(n) / float(m1)
+      if m1 = 1L then acc
+      elif not (Utils.isNatural m2) then goAux acc (m1 - 1L)
+      else                
+        let str = n.ToString() + m1.ToString() + (m2.ToString().Split('.').[0])
+        // printfn "TESTING N[%d] M1[%d] M2[%f] STR[%s]" n m1 m2 str
+        if is9digpan str then acc + n // Only include n once
+        else goAux acc (m1 - 1L)        
+        
+    if n < 1000L then acc
+    else      
+      if not (is_possible n) then go acc (n - 1L)
+      else
+        let max = int64 (sqrt (float n) + 1.0)
+        let npans = goAux 0L max        
+        go (acc + npans) (n - 1L)
+    
+  go 0L 9999L
 
 // Q56: Considering natural numbers of the form, a^b, where a, b < 100, 
 // what is the maximum digital sum?
