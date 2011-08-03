@@ -14,6 +14,6 @@ namespace ProjEulerTests
     [Test] public void Q57() { Assert.AreEqual(5482660, Q51_60.q57(String.Empty)); }  
     [Test] public void Q58() { Assert.AreEqual(49, Q51_60.q58(String.Empty)); }  
     [Test] public void Q59() { Assert.AreEqual(107359, Q51_60.q59(String.Empty)); }  
-    [Test] public void Q60() { Assert.AreEqual(8581146, Q51_60.q60(String.Empty)); }  
+    [Test, Timeout(100000)] public void Q60() { Assert.AreEqual(8581146, Q51_60.q60(String.Empty)); }  
   }
 }

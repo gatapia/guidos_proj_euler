@@ -216,36 +216,32 @@ let q59 x : int =
 // Q92: Investigating a square digits number chain with a surprising property.
 let q60 x = 
   let cache = new Dictionary<int, bool>()
+  let acc = [|0|]
   let charCache = new Dictionary<char, int>()
   ['0'..'9'] |> List.iter(fun c -> charCache.Add(c, pown (int(c) - int('0')) 2))  
   
-  let sum_terms x =  
-    let chars = x.ToString().ToCharArray() 
-    chars |> Array.sumBy(fun c -> charCache.[c]) 
+  let sum_terms x = x.ToString().ToCharArray() |> Array.sumBy(fun c -> charCache.[c]) 
   
   let rec endsIn89 n (lst:List<int>) =        
-    if cache.ContainsKey(n) then       
-      lst.ForEach(fun i -> cache.Add(i, cache.[n]))
-      cache.[n]
+    if cache.ContainsKey(n) then 
+      let v = cache.[n]
+      if v then acc.[0] <- acc.[0] + lst.Count
+      lst.ForEach(fun i -> cache.Add(i, v))      
     else
       lst.Add(n)
       if n = 89 then 
+        acc.[0] <- acc.[0] + lst.Count
         lst.ForEach(fun i -> cache.Add(i, true))
-        true
-      elif n = 1 then 
-        lst.ForEach(fun i -> cache.Add(i, false))
-        false
-      else endsIn89 (sum_terms n) lst    
-  let lst = new List<int>()
+      elif n = 1 then lst.ForEach(fun i -> cache.Add(i, false))        
+      else endsIn89 (sum_terms n) lst   
+         
   // Fill Cache
-  [2..567] |> List.iter(fun n -> 
-    lst.Clear()
-    ignore (endsIn89 n lst)
-  )
-
+  [2..567] |> List.iter(fun n -> endsIn89 n (new List<int>()))
+  
   // Count matching sums
-  [2..9999999] |> List.filter(fun n -> 
+  let filtered = [258..9999999] |> List.filter(fun n -> 
     let sos = sum_terms n
     cache.ContainsKey(sos) && cache.[sos]
-  ) |> List.length
+  ) 
+  (filtered |> List.length) + acc.[0]
 

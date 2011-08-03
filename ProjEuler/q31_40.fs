@@ -118,38 +118,34 @@ let q37 x2 =
 // Q26: Find the value of d  1000 for which 1/d contains the longest recurring 
 // cycle in its decimal fraction part
 let q38 x = 
-  let rex = new Regex("^[0-9]*([0-9]{7,}?)\1+[0-9]*?$")
-  
-  let countUnitRecurringDecs denom =    
-    // !! TERRIBLE HACK !!!!!!! use long division or something smarter, this is terrible!!!
-    let v = (1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000I / denom)
-    let str = v.ToString().Split('.').[0]        
-    let m = rex.Match(str)
-    if m.Success then m.Groups.[1].Value.Length  else 0
-
-    // Algorithm2 by: http://www.mathblog.dk/2011/project-euler-26-find-the-value-of-d-1000-for-which-1d-contains-the-longest-recurring-cycle/
-    // 
-    // Let me illustrate with 1/7.  First calculation of the remainder of 1/7 gives us 1.
-    // Second calculation to analyse the remainder on the first decimal place we multiply by 10,  and divide by 7. The remainder of 10/7 is 3.
-    // In the third calculation we get 30/7 which gives us a remainder of 2.
-    // In the fourth calculation we get 20/7 which gives us a remainder of 6.
-    // In the fifth calculation we get 60/7 which gives us a remainder of 4.
-    // In the sixth calculation we get 40/7 which gives us a remainder of 5.
-    // In the seventh calculation we get 50/7 which gives us a remainder of 1.
-  let countUnitRecurringDecs2 denom =
-    "TODO: Implement"
+ 
+  // Algorithm2 by: http://www.mathblog.dk/2011/project-euler-26-find-the-value-of-d-1000-for-which-1d-contains-the-longest-recurring-cycle/
+  // 
+  // Let me illustrate with 1/7.  First calculation of the remainder of 1/7 gives us 1.
+  // Second calculation to analyse the remainder on the first decimal place we multiply by 10,  and divide by 7. The remainder of 10/7 is 3.
+  // In the third calculation we get 30/7 which gives us a remainder of 2.
+  // In the fourth calculation we get 20/7 which gives us a remainder of 6.
+  // In the fifth calculation we get 60/7 which gives us a remainder of 4.
+  // In the sixth calculation we get 40/7 which gives us a remainder of 5.
+  // In the seventh calculation we get 50/7 which gives us a remainder of 1.
+  let rec countUnitRecurringDecs2 (dic:Dictionary<int, bool>) n d =
+    let rem = n % d
+    if (dic.ContainsKey(rem)) then dic.Count
+    else
+      dic.Add(rem, true)
+      countUnitRecurringDecs2 dic (rem * 10) d
 
   let rec findDWithLongestCycle d maxd max =
-    if d = 1000I then int(maxd)
+    if d = 1000 then int(maxd)
     else
-      let c = countUnitRecurringDecs d
+      let c = countUnitRecurringDecs2 (new Dictionary<int, bool>()) 1 d
       // if c <> 6 && c > max then printfn "1/%s has a %d long recurring cycle" (d.ToString()) c
 
       let maxd = if c > max then d else maxd
       let max = if c > max then c else max
-      findDWithLongestCycle (d + 1I) maxd max
+      findDWithLongestCycle (d + 1) maxd max
   
-  findDWithLongestCycle 2I 2I 0
+  findDWithLongestCycle 2 2 0
 
 // Q52: Find the smallest positive integer, x, such that 2x, 3x, 4x, 5x, and 6x, 
 // contain the same digits
