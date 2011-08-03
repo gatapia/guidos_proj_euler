@@ -28,31 +28,15 @@ let q61 x =
 
 // Q58: Investigate the number of primes that lie on the diagonals of 
 // the spiral grid.
-// SLOW!!! 22 secs 
 let q62 x =  
-  //let q62Aux2 accnp accp sl start =
-    
-    
+  let rec q62Aux accnp accp sl start =
+    let corners = [0..3] |> List.map(fun i -> start + (i * (sl - 1)))    
+    let primes = float(corners |> List.filter(fun c -> Utils.isPrime (int64 c)) |> List.length)    
+    let new_accnp, new_accp = accnp + (4.0 - primes), accp + primes
+    if (new_accp * 100.0 / (new_accnp + new_accp) < 10.0) then sl
+    else q62Aux new_accnp new_accp (sl + 2) (corners.Last() + sl + 1)  
 
-  // Copied from q25
-  let rec q62Aux sidelength accnp accp (num:int) direction x y =    
-    let isp = (x = y || x = -y) && Utils.isPrime (int64 num) 
-    let diagaccnp, diagaccp = if isp then accnp, (accp + 1.0) else (accnp + 1.0), accp        
-
-    if x <= 0 && x = y then q62Aux sidelength diagaccnp diagaccp (num + 1) 6 (x + 1) (y) 
-    elif x < 0 && -x = y then q62Aux sidelength diagaccnp diagaccp (num + 1) 8 (x) (y - 1)
-    elif y < 0 && x = -y then // Spiral completed
-      let perc = (accp * 100.0 / (diagaccnp + diagaccp))
-      // printfn "perc:%f num:%d sidelength:%d" perc num sidelength 
-      if (perc < 10.0) then sidelength 
-      else q62Aux (sidelength + 2) diagaccnp diagaccp (num + 1) 2 (x + 1) (y)    
-    elif x = y then q62Aux sidelength diagaccnp diagaccp (num + 1) 4 (x - 1) (y)
-    else 
-      let newx = if num <> 2 && direction = 6 then x + 1 elif direction = 4 then x - 1 else x
-      let newy = if num = 2 || direction = 2 then y + 1 elif direction = 8 then y - 1 else y
-      q62Aux sidelength accnp accp (num + 1) direction newx newy
-
-  q62Aux 3 0.0 0.0 1 6 0 0
+  q62Aux 1.0 0.0 3 3
 
 // Q69: Find the value of n ≤ 1,000,000 for which n/φ(n) is a maximum.
 // TOO SLOW!!!!!!!!!!!
