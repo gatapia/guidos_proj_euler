@@ -45,6 +45,7 @@
     <Compile Include="q41_50.fs" />
     <Compile Include="q51_60.fs" />
     <Compile Include="q61_70.fs" />
+    <Compile Include="q71_80.fs" />
     <Content Include="q23_names.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

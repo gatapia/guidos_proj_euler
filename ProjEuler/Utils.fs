@@ -264,6 +264,17 @@ let rec euclidianHCF (a:int64) (b:int64) =
   if s = LanguagePrimitives.GenericZero then l
   else euclidianHCF (l - s) s  
 
+// Algorithm from: http://en.wikipedia.org/wiki/Binary_GCD_algorithm 
+// Approx x2.5 faster
+let rec binGcd (u:int64) (v:int64) =
+  if u = v || u = 0L || v = 0L then u ||| v
+  elif u % 2L = 0L then
+    if v % 2L = 0L then 2L * binGcd (u/2L) (v/2L)
+    else binGcd (u/2L) v
+  elif v % 2L = 0L then binGcd u (v/2L)
+  elif u > v then binGcd ((u-v)/2L) v
+  else binGcd ((v-u)/2L) u  
+
 let sumDivisors x = getAllDivisors x false |> List.sum
 
 let areAmicable x y = (sumDivisors x) = y && (sumDivisors y) = x

@@ -161,39 +161,36 @@ let q66 x =
   player1winningHands
 
 // Q71: Listing reduced proper fractions in ascending order of size.
-// TOO SLOW (12 min) AND WRONG ANSWER (2)
 let q67 x =     
   let maxD = 1000000L
   let target = float(3) / float(7)
-    
      
   let findClosestLessThanHCFWithDenenom d =        
-    // if (d % 10000L = 0L) then printfn "findClosestLessThanHCFWithDenenom d:%d" d
     let getValueOfNDPair n = float(n)/float(d)
 
     let rec findNextLowestProperFunction n =
-      if Utils.euclidianHCF n d <> 1L then 
-        if (n = 1L) then (0L, 0.0)
-        else findNextLowestProperFunction (n - 1L)
+      if Utils.binGcd n d <> 1L then findNextLowestProperFunction (n - 1L)
       else (n, getValueOfNDPair n)
     
     // Binary search style search for closes value
-    let rec findClosestLessThanHCFWithDenenomAux low hi curr =            
+    let rec findClosestLessThanHCFWithDenenomAux canend low hi curr =                  
       let mid = low + ((hi - low) / 2L)          
-
-      if (hi < low || mid = low || mid = hi) then curr
-      else                   
+      if (canend && (hi < low || fst curr = mid)) then curr
+      else
         let v = getValueOfNDPair mid        
-        if v < target then findClosestLessThanHCFWithDenenomAux mid hi (mid, v)
-        else findClosestLessThanHCFWithDenenomAux low mid (mid, v)
-    let curr = ((d/2L), getValueOfNDPair (d / 2L))
-    
-    let closest = findClosestLessThanHCFWithDenenomAux 1L d curr
-    findNextLowestProperFunction (fst closest)
-    // Now we need to find on that is a proper reduced fraction
+        if v < target then findClosestLessThanHCFWithDenenomAux true mid hi (mid, v)
+        else findClosestLessThanHCFWithDenenomAux false low mid (mid, v)
+  
 
-  let closest = [2L..maxD] |> List.map (fun d -> findClosestLessThanHCFWithDenenom d) |> List.maxBy(fun t -> snd t)
-  fst closest
+    let n = (d/2L)
+    let curr = (n, getValueOfNDPair n)    
+    let closest = findClosestLessThanHCFWithDenenomAux false 1L d curr
+    let proper = findNextLowestProperFunction (fst closest)
+    proper
+
+  let lst = [3L..maxD] |> List.map (fun d -> findClosestLessThanHCFWithDenenom d) 
+  let max = lst |> List.maxBy(fun t -> snd t)
+  fst max
 
 // Q76: How many different ways can one hundred be written as a sum of at 
 // least two positive integers?
@@ -257,7 +254,7 @@ let q70 x =
       if d > 12000L then acc
       else countFractionsBetweenLimitsAux acc (getMinNumerator d) (getMaxNumerator d) d (d % 2L = 0L)
     else
-      let acc = if Utils.euclidianHCF n d = 1L then (acc + 1L) else acc                          
+      let acc = if Utils.binGcd n d = 1L then (acc + 1L) else acc                          
       let n = if isEven then n + 2L else n + 1L
       countFractionsBetweenLimitsAux acc n maxn d isEven
            

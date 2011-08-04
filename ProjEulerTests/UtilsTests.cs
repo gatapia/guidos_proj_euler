@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using Microsoft.FSharp.Core;
 using NUnit.Framework;
@@ -140,6 +141,21 @@ namespace ProjEulerTests
       Assert.AreEqual(51, Utils.euclidianHCF(867, 1989));
       Assert.AreEqual(1, Utils.euclidianHCF(2267, 401));
     }    
+
+    [Test] public void Test_binary_GCD() {
+      Assert.AreEqual(51, Utils.binGcd(1989, 867));
+      Assert.AreEqual(51, Utils.binGcd(867, 1989));
+      Assert.AreEqual(1, Utils.binGcd(2267, 401));
+    }    
+
+    [Test] public void Test_binary_GCD_perf_vs_euclid() {
+      Stopwatch t = Stopwatch.StartNew();
+      for (int i = 0; i < 100000; i++) { Utils.euclidianHCF(1989, 867); }
+      Console.WriteLine("Euclid's Took: {0}ms", t.ElapsedMilliseconds);
+      t.Restart();
+      for (int i = 0; i < 100000; i++) { Utils.binGcd(1989, 867); }
+      Console.WriteLine("Binary GCD Took: {0}ms", t.ElapsedMilliseconds);
+    }  
 
     [Test] public void Test_numToWord()
     {      
