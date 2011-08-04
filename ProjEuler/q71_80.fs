@@ -12,35 +12,39 @@ open System.Linq
 // can form eight different primes.
 let q71 x = 
   // Start: 56003
-  // Need to look for primes with repeats
   let cache = new Dictionary<string, (int64 * List<int64>)>()
-  let found = [|0L|]
 
-  let testKey p key =
-    if (cache.ContainsKey(key)) then 
-      let cp, lst = cache.[key]
-      lst.Add(p)
-      if lst.Count > 6 then printfn "key: %s primes: %A" key lst
-      if lst.Count = 8 then failwithf "FOUND YOU CNT!!! [%d] PRIMES: %A" cp lst
+  let compareKeys (pstr:string) (k1:string) (k2:string) =    
+    if k1.Length <> k2.Length then false
+    else       
+      let kchars = k1.ToCharArray()
+      let cacheChars = k2.ToCharArray()
+      let pchars = pstr.ToCharArray()
+
+      Utils.forall3(fun key cached prime -> key = cached || prime = cached) kchars cacheChars pchars 
+
+  let getPrimesTuppleForKey p pstr key =
+    let matches = cache.Keys |> Seq.filter(fun k -> compareKeys pstr key k)
+    if matches.Count() > 0 then matches |> Seq.map(fun m -> cache.[m]) |> Seq.toList
     else 
       let lst = new List<int64>()
-      lst.Add(p)
-      cache.Add(key, (p, lst))
-  
-  let rec testCharSeq p (str:string) sidx =
-    let idx = str.IndexOf('*', sidx)              
-    let testCharSeqImpl nidx =
-      if nidx < 0 || nidx = str.Length then ()
-      else 
-        let keyChars2 = str.ToCharArray()                
-        keyChars2.[idx] <- keyChars2.[nidx]
-        testKey p (new String(keyChars2))
-
-    testCharSeqImpl (idx - 1)
-    testCharSeqImpl (idx + 1)
-    testCharSeqImpl (idx)
+      let tp = (p, lst)
+      cache.Add(key, tp)
+      [tp]
     
-    testCharSeq p str idx
+        
+  let testKey p pstr key =
+    let rec testKeyAux tupples =      
+      match tupples with
+      | head :: tail ->
+        let op, (lst:List<int64>) = head
+        lst.Add(p)
+        if lst.Count = 8 then failwithf "FOUND YOU CNT!!! [%d] PRIMES: %A" op lst    
+        testKeyAux tail
+      | [] -> ()
+
+    testKeyAux (getPrimesTuppleForKey p pstr key)
+    
 
   let rec doCharIdx p (added:Dictionary<char, bool>) (str:string) (chars:array<char>) idx =
     if idx = chars.Length then ()
@@ -50,14 +54,14 @@ let q71 x =
       else
         added.Add(c, true)
         let cCount = (chars |> Array.filter(fun c2 -> c2 = c)).Length
-        if cCount > 1 then
-          let key = str.Replace(c, '*')
-          testCharSeq p key 0
+        if cCount > 2 then testKey p str (str.Replace(c, '*'))
+        doCharIdx p added str chars (idx + 1)
 
   let rec q71Aux i last =    
     if i > 100000000 then failwithf "Got to iteration: %d last prime: %d" i last
 
     let p = Utils.getNextPrime last      
+    if p > 929399L then failwith "Did not match actual list"
 
     if i % 100000 = 0 then printfn "LAST: %d THIS: %d" last p
     let added = new Dictionary<char, bool>()

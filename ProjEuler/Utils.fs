@@ -96,6 +96,18 @@ let getPentagonal n = (n * ((3 * n) - 1)) / 2
 
 let isHexagonal n = isNatural ((sqrt((8.0 * n) + 1.0) + 1.0) / 4.0)
 
+let forall3 f (l1:array<'a>) (l2:array<'a>) (l3:array<'a>) =
+  let rec forall3Aux i =   
+    if i = l1.Length then true
+    else
+      let a, b, c = l1.[i], l2.[i], l3.[i]
+      if f a b c then forall3Aux (i + 1)
+      else false
+  if l1.Length <> l2.Length || l1.Length <> l3.Length then failwith "Arrays are not of the same length"
+  forall3Aux 0
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // FIBONACCI
 ////////////////////////////////////////////////////////////////////////////////
