@@ -39,28 +39,16 @@ let q62 x =
   q62Aux 1.0 0.0 3 3
 
 // Q69: Find the value of n ≤ 1,000,000 for which n/φ(n) is a maximum.
-// TOO SLOW!!!!!!!!!!!
 let q63 x =   
-  let phi x2 =
-    // This algorithm copied from http://www.velocityreviews.com/
-    // forums/t459467-computing-eulers-totient-function.html
-    // Boooooooooooooo
-    let mutable x = x2
-    let mutable ret = 1
-    let mutable i = 2
-    let mutable pow = 0
-
-    while x <> 1 do  
-      pow <- 1
-      while (x % i = 0) do
-        x <- x / i
-        pow <- pow * i    
-      ret <- ret * (pow - (pow/i))    
-      i <- i + 1
-    ret  
-  
-  let nscore = [2.0..520000.0] |> List.map(fun n -> (n, (n / float(phi (int n)))))
-  fst (nscore |> List.maxBy(fun ns -> snd ns))  
+  // This algorithm exploits the fact that we are trying to find the higest 
+  // possible n with the least number of divisors.  Considering primes
+  // are the best way of building a number with few divisors lets just build
+  // the largest prime multiplicand <= 1M
+  let rec q63Aux p acc =
+    let newacc = acc * p
+    if newacc > 1000000L then acc
+    else q63Aux (Utils.getNextPrime p) newacc
+  q63Aux (Utils.getNextPrime 1L) 1L
 
 // Q99: Which base/exponent pair in the file has the greatest numerical value?
 let q64 x = 
@@ -251,18 +239,27 @@ let q69 x =
 
 // Q73 :How many fractions lie between 1/3 and 1/2 in a sorted set of 
 // reduced proper fractions?
+// Takes > 10secs (~10.5 secs)
 let q70 x = 
-  let value n d = n/d
-  let min, max =  1.0/3.0, 0.5
-  let rec go acc n d =
-    if d > 12000L then acc
+  let min, max =  1.0/3.0, 1.0/2.0
+
+  let getMinNumerator d = 
+    let n = 1L + int64(float(d) * min)
+    // Only do odd numerators when denominator is even
+    if d % 2L = 0L && n % 2L = 0L then n + 1L 
+    else n
+  
+  let getMaxNumerator d = 1L + int64(float(d) * max)
+
+  let rec countFractionsBetweenLimitsAux acc n maxn d isEven =                    
+    if n >= maxn then 
+      let d = d + 1L
+      if d > 12000L then acc
+      else countFractionsBetweenLimitsAux acc (getMinNumerator d) (getMaxNumerator d) d (d % 2L = 0L)
     else
-      let v = float(n) / float(d)
-      let valid = v > min && v < max && Utils.euclidianHCF n d = 1L
-      let acc = if valid then (acc + 1L) else acc
-      // Next
-      let n = n + 1L
-      if n = d then go acc 1L (d + 1L)
-      else go acc n d
-    
-  go 0L 1L 2L
+      let acc = if Utils.euclidianHCF n d = 1L then (acc + 1L) else acc                          
+      let n = if isEven then n + 2L else n + 1L
+      countFractionsBetweenLimitsAux acc n maxn d isEven
+           
+  let d = 3L
+  countFractionsBetweenLimitsAux 0L (getMinNumerator d) (getMaxNumerator d) d true
