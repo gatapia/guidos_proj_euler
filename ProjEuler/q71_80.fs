@@ -11,7 +11,6 @@ open System.Linq
 // Q51: Find the smallest prime which, by changing the same part of the number, 
 // can form eight different primes.
 let q71 x = 
-  // Start: 56003
   let cache = new Dictionary<string, (int64 * List<int64>)>()
 
   let compareKeys (pstr:string) (k1:string) (k2:string) =    
@@ -30,50 +29,45 @@ let q71 x =
       let lst = new List<int64>()
       let tp = (p, lst)
       cache.Add(key, tp)
-      [tp]
-    
+      [tp]    
         
-  let testKey p pstr key =
+  let testKey p pstr key : int64 =
     let rec testKeyAux tupples =      
       match tupples with
       | head :: tail ->
-        let op, (lst:List<int64>) = head
+        let (op:int64), (lst:List<int64>) = head
         lst.Add(p)
-        if lst.Count = 8 then failwithf "FOUND YOU CNT!!! [%d] PRIMES: %A" op lst    
-        testKeyAux tail
-      | [] -> ()
+        if lst.Count = 8 then op
+        else testKeyAux tail
+      | [] -> 0L
+    testKeyAux (getPrimesTuppleForKey p pstr key)    
 
-    testKeyAux (getPrimesTuppleForKey p pstr key)
-    
-
-  let rec doCharIdx p (added:Dictionary<char, bool>) (str:string) (chars:array<char>) idx =
-    if idx = chars.Length then ()
+  let rec doCharIdx p (added:Dictionary<char, bool>) (str:string) (chars:array<char>) idx : int64 =
+    if idx = chars.Length then 0L
     else
       let c = chars.[idx]
       if added.ContainsKey(c) then doCharIdx p added str chars (idx + 1)
       else
         added.Add(c, true)
         let cCount = (chars |> Array.filter(fun c2 -> c2 = c)).Length
-        if cCount > 2 then testKey p str (str.Replace(c, '*'))
-        doCharIdx p added str chars (idx + 1)
+        if cCount > 2 then 
+          let found = testKey p str (str.Replace(c, '*'))
+          if found > 0L then found
+          else doCharIdx p added str chars (idx + 1)
+        else doCharIdx p added str chars (idx + 1)
 
-  let rec q71Aux i last =    
-    if i > 100000000 then failwithf "Got to iteration: %d last prime: %d" i last
-
+  let rec q71Aux last =    
     let p = Utils.getNextPrime last      
-    if p > 929399L then failwith "Did not match actual list"
 
-    if i % 100000 = 0 then printfn "LAST: %d THIS: %d" last p
     let added = new Dictionary<char, bool>()
     let str = p.ToString()
     let chars = str.ToCharArray()
       
-    doCharIdx p added str chars 0      
-    q71Aux (i + 1) p
+    let found = doCharIdx p added str chars 0      
+    if found > 0L then found
+    else q71Aux p
   
-  q71Aux 0 56002L
-  100
-
+  q71Aux 56002L
 
 // Q
 let q72 x = 
