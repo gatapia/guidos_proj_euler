@@ -13,35 +13,62 @@ open System.Linq
 let q71 x = 
   // Start: 56003
   // Need to look for primes with repeats
-  let cache = new Dictionary<string, (int64 * int)>()
-    
-  let rec q71Aux i last =
-    if i % 100000 = 0 then printfn "PRIME: %d" last
-    if i > 100000000 then failwithf "Got to iteration: %d last prime: %d" i last
+  let cache = new Dictionary<string, (int64 * List<int64>)>()
+  let found = [|0L|]
+
+  let testKey p key =
+    if (cache.ContainsKey(key)) then 
+      let cp, lst = cache.[key]
+      lst.Add(p)
+      if lst.Count > 6 then printfn "key: %s primes: %A" key lst
+      if lst.Count = 8 then failwithf "FOUND YOU CNT!!! [%d] PRIMES: %A" cp lst
     else 
-      let p = Utils.getNextPrime last
-      let added = new Dictionary<char, bool>()
-      let str = p.ToString()
-      let chars = str.ToCharArray()
+      let lst = new List<int64>()
+      lst.Add(p)
+      cache.Add(key, (p, lst))
+  
+  let rec testCharSeq p (str:string) sidx =
+    let idx = str.IndexOf('*', sidx)              
+    let testCharSeqImpl nidx =
+      if nidx < 0 || nidx = str.Length then ()
+      else 
+        let keyChars2 = str.ToCharArray()                
+        keyChars2.[idx] <- keyChars2.[nidx]
+        testKey p (new String(keyChars2))
+
+    testCharSeqImpl (idx - 1)
+    testCharSeqImpl (idx + 1)
+    testCharSeqImpl (idx)
+    
+    testCharSeq p str idx
+
+  let rec doCharIdx p (added:Dictionary<char, bool>) (str:string) (chars:array<char>) idx =
+    if idx = chars.Length then ()
+    else
+      let c = chars.[idx]
+      if added.ContainsKey(c) then doCharIdx p added str chars (idx + 1)
+      else
+        added.Add(c, true)
+        let cCount = (chars |> Array.filter(fun c2 -> c2 = c)).Length
+        if cCount > 1 then
+          let key = str.Replace(c, '*')
+          testCharSeq p key 0
+
+  let rec q71Aux i last =    
+    if i > 100000000 then failwithf "Got to iteration: %d last prime: %d" i last
+
+    let p = Utils.getNextPrime last      
+
+    if i % 100000 = 0 then printfn "LAST: %d THIS: %d" last p
+    let added = new Dictionary<char, bool>()
+    let str = p.ToString()
+    let chars = str.ToCharArray()
       
-      let mutable found = 0L
-      for c in chars do
-        if not (added.ContainsKey(c)) then
-          added.Add(c, true)
-          let cCount = (chars |> Array.filter(fun c2 -> c2 = c)).Length
-          if cCount > 1 then
-            let str = str.Replace(c, '*')
-            if (cache.ContainsKey(str)) then 
-              let existing = cache.[str]
-              let newcount = (snd existing) + 1
-              if newcount > 6 then printfn "str: %s count: %d" str newcount
-              if newcount = 8 then found <- (fst existing)
-              else cache.[str] <- (fst existing, newcount)
-            else cache.Add(str, (p, 1))
-      if found > 0L then found
-      else q71Aux (i + 1) p
+    doCharIdx p added str chars 0      
+    q71Aux (i + 1) p
   
   q71Aux 0 56002L
+  100
 
 
 // Q
