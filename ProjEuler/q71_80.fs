@@ -12,35 +12,32 @@ open System.Linq
 // can form eight different primes.
 let q71 x = 
   let cache = new Dictionary<string, (int64 * List<int64>)>()
+  let cacheKeys = List<string>()
 
-  let compareKeys (pstr:string) (k1:string) (k2:string) =    
-    if k1.Length <> k2.Length then false
-    else       
-      let kchars = k1.ToCharArray()
-      let cacheChars = k2.ToCharArray()
-      let pchars = pstr.ToCharArray()
-
-      Utils.forall3(fun key cached prime -> key = cached || prime = cached) kchars cacheChars pchars 
+  let compareKeys (primeNum:string) (key:string) (cacheKey:string) =    
+    key = cacheKey || Utils.forall3str(fun key cached prime -> key = cached || prime = cached) key cacheKey primeNum
 
   let getPrimesTuppleForKey p pstr key =
-    let matches = cache.Keys |> Seq.filter(fun k -> compareKeys pstr key k)
-    if matches.Count() > 0 then matches |> Seq.map(fun m -> cache.[m]) |> Seq.toList
+    let matches = cacheKeys.Where(fun k -> compareKeys pstr key k).Select(fun m -> cache.[m])
+    if matches.Any() then matches.ToArray()
     else 
       let lst = new List<int64>()
       let tp = (p, lst)
+      cacheKeys.Add(key)
       cache.Add(key, tp)
-      [tp]    
+      [|tp|]    
         
   let testKey p pstr key : int64 =
-    let rec testKeyAux tupples =      
-      match tupples with
-      | head :: tail ->
-        let (op:int64), (lst:List<int64>) = head
+    let tupples = getPrimesTuppleForKey p pstr key
+    let rec testKeyAux idx =      
+      if idx = tupples.Length then 0L
+      else
+        let (op:int64), (lst:List<int64>) = tupples.[idx]
         lst.Add(p)
         if lst.Count = 8 then op
-        else testKeyAux tail
-      | [] -> 0L
-    testKeyAux (getPrimesTuppleForKey p pstr key)    
+        else testKeyAux (idx + 1)
+
+    testKeyAux 0
 
   let rec doCharIdx p (added:Dictionary<char, bool>) (str:string) (chars:array<char>) idx : int64 =
     if idx = chars.Length then 0L
@@ -50,7 +47,7 @@ let q71 x =
       else
         added.Add(c, true)
         let cCount = (chars |> Array.filter(fun c2 -> c2 = c)).Length
-        if cCount > 2 then 
+        if cCount = 3 then 
           let found = testKey p str (str.Replace(c, '*'))
           if found > 0L then found
           else doCharIdx p added str chars (idx + 1)
@@ -69,13 +66,45 @@ let q71 x =
   
   q71Aux 56002L
 
-// Q
-let q72 x = 
-  10
+// Q112: Find the least number for which the proportion of bouncy numbers is 
+// exactly 99%.
+let q72 x =     
+  let isBouncy i =
+    let chars = i.ToString().ToCharArray()
+    let pairs = chars |> Seq.pairwise
+    pairs |> Seq.exists(fun (a, b) -> a > b) && 
+        pairs |> Seq.exists(fun (a, b) -> a < b)
 
-// Q
+  let rec q72Aux i b =
+    let ni = i + 1.0
+    let nb = if isBouncy ni then b + 1.0 else b
+    if (nb / ni) = 0.99 then ni
+    else q72Aux ni nb
+  q72Aux 21780.0 (21780.0 * 0.9)
+
+// Q206: Find the unique positive integer whose square has the 
+// form 1_2_3_4_5_6_7_8_9_0, where each “_” is a single digit.
 let q73 x = 
-  10
+  let tmpl = "1_2_3_4_5_6_7_8_9_0"
+
+  let testNum n =
+    let nstr = (n * n).ToString()
+    nstr.Chars(0) = '1' && 
+      nstr.Chars(2) = '2' &&
+      nstr.Chars(4) = '3' &&
+      nstr.Chars(6) = '4' &&
+      nstr.Chars(8) = '5' &&
+      nstr.Chars(10) = '6' &&
+      nstr.Chars(12) = '7' &&
+      nstr.Chars(14) = '8' &&
+      nstr.Chars(16) = '9' &&
+      nstr.Chars(18) = '0'
+
+  let rec q73Aux n =
+    if n > 1389026623L then failwith "Err"
+    elif testNum n then n
+    else q73Aux (n + 1L)    
+  q73Aux 1010101010L
 
 // Q
 let q74 x = 
@@ -104,3 +133,5 @@ let q79 x =
 // Q
 let q80 x = 
   10
+
+printfn "q71: %s" ((q71 "").ToString())

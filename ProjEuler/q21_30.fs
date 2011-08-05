@@ -91,12 +91,10 @@ let q27 x =
   
   
 // Q67: Find the maximum total from top to bottom in triangle.txt 
-let q28 x = 
-  let triangle = File.ReadAllText("q28_triangle.txt").Split('\n') |> 
-    Array.filter (fun (str:string) -> str.Length > 0) |>
-    Array.map (fun (ln:string) -> ln.Split(' ') |> 
-    Array.filter (fun (str:string) -> str.Length > 0) |>
-    Array.map (fun str -> Int64.Parse(str))) 
+let q28 x =   
+  let triangle = 
+    File.ReadAllText("q28_triangle.txt").Split('\n') |> Array.filter (fun (str:string) -> str.Length > 0) 
+      |> Array.map (fun (ln:string) -> ln.Split(' ') |> Array.filter (fun (str:string) -> str.Length > 0) |> Array.map (fun str -> Int64.Parse(str))) 
   let scores = Utils.scoreTree triangle 
   List.nth scores (scores.Length - 1) |> List.max
 

@@ -215,7 +215,7 @@ let q69 x =
   let cube_list = new List<int64>()    
   let get_key num = new String(num.ToString().ToCharArray() |> Array.sort)
 
-  ignore [for i in 1L..50000L -> 
+  for i in 1L..50000L do
     let c = i * i * i
     cube_list.Add(c)
     let key = get_key c
@@ -223,7 +223,6 @@ let q69 x =
     if cube_chars_sorted_cache.ContainsKey(key) then 
       cube_chars_sorted_cache.[key] <- cube_chars_sorted_cache.[key] + 1
     else  cube_chars_sorted_cache.Add(key, 1)
-  ]
   
   let rec find idx =        
     let cube = cube_list.[idx]
