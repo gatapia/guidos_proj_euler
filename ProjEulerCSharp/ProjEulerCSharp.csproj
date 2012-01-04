@@ -2,18 +2,20 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EC68BF9A-B335-4432-966A-2BF9D431E213}</ProjectGuid>
+    <ProjectGuid>{5736D177-1611-43A2-A33C-400FCC2876E2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProjEulerTests</RootNamespace>
-    <AssemblyName>ProjEulerTests</AssemblyName>
+    <RootNamespace>ProjEulerCSharp</RootNamespace>
+    <AssemblyName>ProjEulerCSharp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,9 +23,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,13 +33,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\lib\nunit.framework.dll</HintPath>
-    </Reference>
+    <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -46,27 +49,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Q71_80_Tests.cs" />
-    <Compile Include="Q61_70_Tests.cs" />
-    <Compile Include="Q51_60_Tests.cs" />
-    <Compile Include="Q41_50_Tests.cs" />
-    <Compile Include="Q31_40_Tests.cs" />
-    <Compile Include="Q21_30_Tests.cs" />
-    <Compile Include="Q11_20_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Q1_10_Tests.cs" />
-    <Compile Include="Q66_PokerTests.cs" />
-    <Compile Include="UtilsTests.cs" />
+    <Compile Include="Q74_80.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ProjEulerCSharp\ProjEulerCSharp.csproj">
-      <Project>{5736D177-1611-43A2-A33C-400FCC2876E2}</Project>
-      <Name>ProjEulerCSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ProjEuler\ProjEuler.fsproj">
-      <Project>{767D7B81-1D0D-4462-8612-F7A8C912E84E}</Project>
-      <Name>ProjEuler</Name>
-    </ProjectReference>
+    <None Include="files\q102_triangles.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,19 +1,23 @@
 ﻿using System;
 using NUnit.Framework;
+using ProjEulerCSharp;
 
 namespace ProjEulerTests
 {
   [TestFixture, Timeout(1000000)] public class Q71_80_Tests
   {
-    [Test] public void Q71() { Assert.AreEqual(121313, Q71_80.q71(String.Empty)); }  
-    [Test] public void Q72() { Assert.AreEqual(1587000, Q71_80.q72(String.Empty)); }  
-    [Test] public void Q73() { Assert.AreEqual(1389019170, Q71_80.q73(String.Empty)); }  
-    [Test] public void Q74() { Assert.AreEqual(1, Q71_80.q74(String.Empty)); }  
-    [Test] public void Q75() { Assert.AreEqual(1, Q71_80.q75(String.Empty)); }  
-    [Test] public void Q76() { Assert.AreEqual(1, Q71_80.q76(String.Empty)); }      
-    [Test] public void Q77() { Assert.AreEqual(1, Q71_80.q77(String.Empty)); }  
-    [Test] public void Q78() { Assert.AreEqual(1, Q71_80.q78(String.Empty)); }  
-    [Test] public void Q79() { Assert.AreEqual(1, Q71_80.q79(String.Empty)); }  
-    [Test] public void Q80() { Assert.AreEqual(1, Q71_80.q80(String.Empty)); }       
+    // F#
+    [Test] public void Q71() { Assert.AreEqual(121313, Q71_73.q71(String.Empty)); }  
+    [Test] public void Q72() { Assert.AreEqual(1587000, Q71_73.q72(String.Empty)); }  
+    [Test] public void Q73() { Assert.AreEqual(1389019170, Q71_73.q73(String.Empty)); }  
+
+    // C#
+    [Test] public void Q74() { Assert.AreEqual(272, Q74_80.Q74()); }  
+    [Test] public void Q75() { Assert.AreEqual(2772, Q74_80.Q75()); }  
+    [Test] public void Q76() { Assert.AreEqual(228, Q74_80.Q76()); }      
+    [Test] public void Q77() { Assert.AreEqual(28684, Q74_80.Q77()); }  
+    [Test] public void Q78() { Assert.AreEqual(1, Q74_80.Q78()); }  
+    [Test] public void Q79() { Assert.AreEqual(1, Q74_80.Q79()); }  
+    [Test] public void Q80() { Assert.AreEqual(1, Q74_80.Q80()); }       
   }
 }
