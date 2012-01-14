@@ -150,8 +150,53 @@ namespace ProjEulerCSharp
 
     // Q60: Find a set of five primes for which any two 
     // primes concatenate to produce another prime.
-    public static int Q78() { return 10; }
+    public static long Q78()
+    {
+      const int MAX = 10000;
+      var allPrimes = Utils.PRIME_CACHE.Select(p => p.ToString()).ToArray();
+      var isPrimeLookup = new Dictionary<string, bool>();
+      Array.ForEach(allPrimes, p => isPrimeLookup.Add(p, true));
+      var largest = Utils.PRIME_CACHE.Last();
+      for (long i = largest - 1; i > 2; i--)
+      {
+        var str = i.ToString();
+        if (!isPrimeLookup.ContainsKey(str)) isPrimeLookup.Add(str, false);
+      }
+      var primes = Utils.PRIME_CACHE.Where(p => p < MAX).Select(p => p.ToString()).ToArray();      
+      var possibles = new List<long>();
+      
+      foreach (var p1 in primes) {
+        foreach (var p2 in primes.SkipWhile(p => p != p1)) {
+          if (!AreConcatPrimes(isPrimeLookup, p2, p1)) { continue; }
+          foreach (var p3 in primes.SkipWhile(p => p != p2)) {
+            if (!AreConcatPrimes(isPrimeLookup, p3, p2, p1)) { continue; }            
+            foreach (var p4 in primes.SkipWhile(p => p != p3)) {              
+              if (!AreConcatPrimes(isPrimeLookup, p4, p3, p2, p1)) { continue; }                            
+              foreach (var p5 in primes.SkipWhile(p => p != p4)) {
+                if (AreConcatPrimes(isPrimeLookup, p5, p4, p3, p2, p1)) {                   
+                  var sum = new [] {p5, p4, p3, p2, p1}.Sum(str => Int64.Parse(str));
+                  possibles.Add(sum);
+                }
+              }
+            }
+          }
+        }
+      }
+      return possibles.Min();
+    }
+
+    private static bool AreConcatPrimes(IDictionary<string, bool> allPrimes, string newp, params string[] nums) {
+      Func<string, bool> isPrime = str => {
+        if (allPrimes.ContainsKey(str)) return allPrimes[str];
+        var num  = Int64.Parse(str);
+        var isp = Utils.isPrime(num);
+        return allPrimes[str] = isp;
+      };
+      return nums.All(p1 => isPrime(p1 + newp) && isPrime(newp + p1));
+    }  
+
     public static int Q79() { return 10; }
+
     public static int Q80() { return 10; }
   }
 }
