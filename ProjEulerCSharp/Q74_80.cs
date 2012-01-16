@@ -193,10 +193,54 @@ namespace ProjEulerCSharp
         return allPrimes[str] = isp;
       };
       return nums.All(p1 => isPrime(p1 + newp) && isPrime(newp + p1));
-    }  
+    }
 
-    public static int Q79() { return 10; }
+    // Q70: Investigate values of n for which φ(n) is a permutation of n.
+    // Solution 'ispired' by 
+    // http://blog.dreamshire.com/2009/04/13/project-euler-problem-70-solution/
+    public static long Q79() {       
+      var result = new Tuple<double, long>(Int64.MaxValue, Int64.MaxValue);
+      var primes = Utils.PRIME_CACHE.
+        TakeWhile(p => p < Math.Pow(10, 7) / 2).
+        ToArray();
+      
+      for (int i = 0; i < primes.Length; i++)
+      {
+        var p1 = primes[i];
+        for (int j = i + 1; j < primes.Length; j++)
+        {
+          var p2 = primes[j];
+          var n = p1 * p2;
+          if (n >= Math.Pow(10, 7)) break;
 
-    public static int Q80() { return 10; }
+          var phi = (p1-1) * (p2-1);          
+          var ratio = n / (double) phi;
+          if (ratio < result.Item1 && Utils.areNumbersPermutations(n, phi)) {          
+            result = new Tuple<double, long>(ratio, n);
+          }
+        }
+      }
+      return result.Item2; 
+    }
+
+    // Q72: How many elements would be contained in the set of reduced 
+    // proper fractions for d ≤ 1,000,000?
+    public static int Q80() {
+      const int max = 1000000;
+      var cache = new Dictionary<long, bool>();
+      var c = 0;
+      for (int n = 1; n <= max; n++)
+      {
+        if (Utils.isPrimeCached(n, cache)) {
+          c += max - n;
+        } else {
+          for (int d = n + 1; d <= max; d++)
+          {
+            if (Utils.euclidianHCF(n, d) == 1) c++;
+          }
+        }
+      }
+      return c; 
+    }
   }
 }

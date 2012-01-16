@@ -17,7 +17,7 @@ namespace ProjEulerTests
     [Test] public void Q76() { Assert.AreEqual(228, Q74_80.Q76()); }      
     [Test] public void Q77() { Assert.AreEqual(28684, Q74_80.Q77()); }  
     [Test] public void Q78() { Assert.AreEqual(26033, Q74_80.Q78()); }  
-    [Test] public void Q79() { Assert.AreEqual(990326167, Q74_80.Q79()); }  
+    [Test] public void Q79() { Assert.AreEqual(8319823, Q74_80.Q79()); }  
     [Test] public void Q80() { Assert.AreEqual(1, Q74_80.Q80()); }       
   }
 }
